@@ -1,0 +1,6 @@
+-Kdrama vibe with Django, scrapy, nextjs.
+- Scrape list of actors, actresses and dramas from my dramalist and get the url, name, rating and number
+- Use wikipedia to get images and more details for individual on user request on home page
+- Use my dramalist for any changes, ie recent dramas or change in url, number or rating.
+
+Yes ✅ absolutely — you can build your own custom admin dashboard (say, in Next.js) and connect it with Scrapyd (the Scrapy daemon that runs spiders). Many companies do exactly this when they need more control than ScrapyWebUI gives.
