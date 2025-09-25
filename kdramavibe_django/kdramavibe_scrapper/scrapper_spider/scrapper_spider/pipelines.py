@@ -32,7 +32,7 @@ class KdramaPipeline:
             raise ValueError("Kdrama title required")
         
     def save_kdrama(self, item):
-        obj, created = Kdrama.objects.update_or_create(
+        kdrama, _ = Kdrama.objects.update_or_create(
                 dramabeans_url=item["dramabeans_url"],
                 defaults={
                     "title": item.get("title"),
@@ -44,7 +44,7 @@ class KdramaPipeline:
                 }
             )
         
-        return obj
+        return kdrama
         
 
 
@@ -61,7 +61,7 @@ class KactorPipeline:
         
 
     def save_kactor(self, item):
-        obj, created = Kactor.objects.update_or_create(
+        kactor, _ = Kactor.objects.update_or_create(
             dramabeans_url=item["dramabeans_url"],
             defaults={
                 "name": item.get("name"),
@@ -70,9 +70,85 @@ class KactorPipeline:
             }
         )
 
-        return obj
+        return kactor
 
 
 class KdramaDetailsPipeline:
-    def process_item(self, item, spider):
-        return item
+    async def process_item(self, item, spider):
+        adapter = ItemAdapter(item)
+
+        if adapter.get('dramabeans_url'):
+            if adapter.get('total_rating'):
+                adapter['total_rating'] = adapter.get('total_rating').replace("/", "")
+            await sync_to_async(self.update_kdrama)(adapter)
+            return item
+  
+        else:
+            raise ValueError("dramabeans url required")
+        
+    def update_kdrama(self, item):
+        kdrama, _ = Kdrama.objects.update_or_create(
+                dramabeans_url=item["dramabeans_url"],
+                defaults={
+                    "title": item.get("title"),
+                    "description": item.get("description"),
+                    "rating": item.get("rating"),
+                    "total_rating": item.get("total_rating"),
+                    "genre": item.get("genre"),
+                    "dramabeans_url": item.get("dramabeans_url"),
+                }
+            )
+        for actor_data in item.get('kactors', []):
+            kactor, _ = Kactor.objects.get_or_create(
+                dramabeans_url=actor_data['dramabeans_url'],
+                defaults={'name': actor_data['name'], "dramabeans_url": item.get("dramabeans_url"),
+}
+            )
+
+            # Link via KRole (avoid duplicates)
+            Krole.objects.update_or_create(
+                kdrama=kdrama,
+                kactor=kactor,
+                defaults={'role_name': actor_data['role']}
+            )
+        
+        return kdrama
+        
+class KactorDetailsPipeline:
+    async def process_item(self, item, spider):
+        adapter = ItemAdapter(item)
+        if adapter.get('dramabeans_url'):
+           
+            await sync_to_async(self.update_kactor)(adapter)
+            return item
+  
+        else:
+            raise ValueError("dramabeans url required")
+        
+    def update_kactor(self, item):
+        kactor, _ = Kactor.objects.update_or_create(
+                dramabeans_url=item["dramabeans_url"],
+                defaults={
+                    "name": item.get("name"),
+                    "description": item.get("description"),
+                    "bio": item.get("bio"),
+                    "birthday": item.get("birthday"),
+                    "birthplace": item.get("birthplace"),
+                    "dramabeans_url": item.get("dramabeans_url"),
+                }
+            )
+        for kdrama_title in item.get('kdramas', []):
+            kdrama, _ = Kdrama.objects.get_or_create(
+                title=kdrama_title,
+                defaults={'title': kdrama_title },
+
+            )
+
+            # Link via KRole (avoid duplicates)
+            Krole.objects.update_or_create(
+                kdrama=kdrama,
+                kactor=kactor,
+                defaults={'role_name': ""}
+            )
+        
+        return kactor

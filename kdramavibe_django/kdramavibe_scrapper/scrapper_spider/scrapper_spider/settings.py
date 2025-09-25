@@ -17,6 +17,7 @@ django.setup()
 
 BOT_NAME = "scrapper_spider"
 
+
 SPIDER_MODULES = ["kdramavibe_scrapper.scrapper_spider.scrapper_spider.spiders"]
 NEWSPIDER_MODULE = "kdramavibe_scrapper.scrapper_spider.scrapper_spider.spiders"
 

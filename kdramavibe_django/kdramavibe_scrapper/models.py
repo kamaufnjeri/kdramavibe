@@ -17,9 +17,10 @@ class BaseModel(models.Model):
 
 
 class Kdrama(BaseModel):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
     year = models.CharField(max_length=10, blank=True, null=True)
     rating = models.FloatField(blank=True, null=True)
+    total_rating = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     writers = models.JSONField(blank=True, null=True)
     directors = models.JSONField(blank=True, null=True)
@@ -44,11 +45,12 @@ class Kdrama(BaseModel):
 
 
 class Kactor(BaseModel):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     alternate_names = models.JSONField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
-    birthday = models.DateField(blank=True, null=True)
+    birthday = models.CharField(blank=True, null=True)
+    birthplace = models.CharField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     education = models.JSONField(blank=True, null=True)       
     occupations = models.JSONField(blank=True, null=True)      
@@ -74,9 +76,9 @@ class Kactor(BaseModel):
 
 
 class Krole(BaseModel):
-    kactor = models.ForeignKey(Kactor, on_delete=models.CASCADE)
-    kdrama = models.ForeignKey(Kdrama, on_delete=models.CASCADE)
-    role_name = models.CharField(max_length=255)
+    kactor = models.ForeignKey(Kactor, related_name="kactors_roles", on_delete=models.CASCADE)
+    kdrama = models.ForeignKey(Kdrama, related_name="kdramas_roles",  on_delete=models.CASCADE)
+    role_name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.actor.name} as {self.role_name} in {self.drama.title}"

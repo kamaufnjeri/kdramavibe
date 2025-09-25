@@ -1,0 +1,5 @@
+Django>=4.2
+Scrapy>=2.8
+djangorestframework>=3.14
+django-filter>=23.2
+playwright>=1.41
