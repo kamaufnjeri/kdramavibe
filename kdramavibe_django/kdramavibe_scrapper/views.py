@@ -20,7 +20,7 @@ class KdramaListView(ListAPIView):
 
 class KactorListView(ListAPIView):
     queryset = Kactor.objects.all()
-    serializer_class = KactorSerializer
+    serializer_class = KactorDetailSerializer
     pagination_class = KdramaPagination
 
 class KdramaDetailView(RetrieveAPIView):

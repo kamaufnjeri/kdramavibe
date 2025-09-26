@@ -8,6 +8,7 @@
 from kdramavibe_scrapper.models import Kdrama, Kactor, Krole
 from asgiref.sync import sync_to_async
 from itemadapter import ItemAdapter
+from django.utils.text import slugify
 
 
 class KdramaPipeline:
@@ -138,17 +139,17 @@ class KactorDetailsPipeline:
                 }
             )
         for kdrama_title in item.get('kdramas', []):
+            slug = slugify(kdrama_title.strip())
             kdrama, _ = Kdrama.objects.get_or_create(
-                title=kdrama_title,
-                defaults={'title': kdrama_title },
+                slug=slug,
+                defaults={'title': kdrama_title.strip() },
 
             )
 
             # Link via KRole (avoid duplicates)
             Krole.objects.update_or_create(
                 kdrama=kdrama,
-                kactor=kactor,
-                defaults={'role_name': ""}
+                kactor=kactor
             )
         
         return kactor
