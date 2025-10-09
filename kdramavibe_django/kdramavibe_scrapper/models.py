@@ -22,16 +22,18 @@ class Kdrama(BaseModel):
     rating = models.FloatField(blank=True, null=True)
     total_rating = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    plot = models.TextField(blank=True, null=True)
     writers = models.JSONField(blank=True, null=True)
     directors = models.JSONField(blank=True, null=True)
     dramabeans_url = models.URLField(unique=True, blank=True, null=True)
     wikipedia_url = models.URLField(unique=True, blank=True, null=True)
     image_url = models.URLField(blank=True, null=True)
+    wikipedia_image_url = models.URLField(blank=True, null=True)
     alternate_titles = models.JSONField(blank=True, null=True)
-    genre = models.JSONField(blank=True, null=True)
+    genres = models.JSONField(blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True)
-    episodes = models.IntegerField(blank=True, null=True)
-    network = models.CharField(max_length=255, blank=True, null=True)
+    episodes = models.JSONField(blank=True, null=True)
+    networks = models.JSONField(blank=True, null=True)
     release_date = models.CharField(blank=True, null=True)
     running_time = models.CharField(max_length=50, blank=True, null=True)
 
@@ -45,10 +47,16 @@ class Kdrama(BaseModel):
 
 
 class Kactor(BaseModel):
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female')
+    ]
+
     name = models.CharField(max_length=255, unique=True)
     alternate_names = models.JSONField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
+    gender = models.CharField(max_length=6, choices=GENDER_CHOICES, null=True, blank=True)
     birthday = models.CharField(blank=True, null=True)
     birthplace = models.CharField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)

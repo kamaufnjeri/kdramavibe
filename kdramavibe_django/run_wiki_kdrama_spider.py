@@ -5,23 +5,22 @@ os.environ.setdefault(
 )
 django.setup()
 from scrapy.crawler import CrawlerProcess
-from kdramavibe_scrapper.scrapper_spider.scrapper_spider.spiders import (
-    KactorDetailsSpider, KactorsSpider
-)
-from kdramavibe_scrapper.models import Kactor
+from kdramavibe_scrapper.scrapper_spider.scrapper_spider.spiders import WikipediaKdramasSpider
+
+from kdramavibe_scrapper.models import Kdrama
 
 process = CrawlerProcess()
-process.crawl(KactorsSpider)
+process.crawl(WikipediaKdramasSpider)
 process.start()
 
-# # Pull the list of kactors with dramabeans URLs
-# kactors = list(
-#     Kactor.objects
+# Pull the list of kdramas with dramabeans URLs
+# kdramas = list(
+#     Kdrama.objects
 #     .exclude(dramabeans_url__isnull=True)       # exclude NULL
 #     .exclude(dramabeans_url="")                 # exclude empty strings
-#     .values_list("name", "dramabeans_url")
+#     .values_list("title", "dramabeans_url")
 # )
 
 # process = CrawlerProcess()
-# process.crawl(KactorDetailsSpider, kactors=kactors)
+# process.crawl(KdramaDetailsSpider, kdramas=kdramas)
 # process.start()
