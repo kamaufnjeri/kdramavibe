@@ -12,6 +12,31 @@ from itemadapter import ItemAdapter
 from django.utils.text import slugify
 from .clean_data import cleaner
 
+
+class WikipediaKactorPipeline:
+    async def process_item(self, item, spider):
+        cleaned_item = cleaner.clean_dict(item)
+        adapter = ItemAdapter(cleaned_item)
+
+        if adapter.get('name'):
+            await sync_to_async(self.save_or_update_kactor)(adapter)
+            return item
+  
+        else:
+            raise ValueError("Kactor name required")
+        
+
+    def save_or_update_kactor(self, item):
+        # Save or update the Kdrama
+        kactor, _ = Kactor.objects.update_or_create(
+            slug=slugify(item["name"]),
+            defaults=item
+        )
+
+        return kactor
+
+
+
 class WikipediaKdramaPipeline:
     async def process_item(self, item, spider):
         cleaned_item = cleaner.clean_dict(item)
@@ -26,9 +51,47 @@ class WikipediaKdramaPipeline:
         else:
             raise ValueError("Kdrama title required")
         
+
     def save_or_update_kdrama(self, item):
-        query = Q()
-        all_titles = [item['title']] + item.get('alternate_titles', [])
+        kactors = item.pop('kactors', [])
+
+        # Save or update the Kdrama
+        kdrama, _ = Kdrama.objects.update_or_create(
+            slug=slugify(item["title"]),
+            defaults=item
+        )
+
+        for actor_data in kactors:
+            actor_name = actor_data.get('actor', None)
+            actor_url = actor_data.get('url').strip().rstrip('/') if actor_data.get('url') else None
+            
+            role_name = actor_data.get('role')
+
+            if not actor_name:
+                continue
+
+            slug = slugify(actor_name)
+
+            kactor, _ = Kactor.objects.update_or_create(
+                slug=slug,
+                defaults={
+                    "name": actor_name,
+                    "slug": slugify(actor_name),
+                    "wikipedia_url": actor_url,  # ✅ make sure URL is stored
+                }
+            )
+
+            # Save or update the relationship (Krole)
+            Krole.objects.update_or_create(
+                kdrama=kdrama,
+                kactor=kactor,
+                defaults={"role_name": role_name}
+            )
+
+        return kdrama
+
+        
+
 
 
 class KdramaPipeline:

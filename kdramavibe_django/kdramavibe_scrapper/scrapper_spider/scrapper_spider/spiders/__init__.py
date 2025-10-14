@@ -5,3 +5,4 @@
 from .kdramas import KdramasSpider
 from .kactors import KactorsSpider
 from .wikipedia_kdrama import WikipediaKdramasSpider
+from .wikipedia_kactor import WikipediaKactorsSpider
