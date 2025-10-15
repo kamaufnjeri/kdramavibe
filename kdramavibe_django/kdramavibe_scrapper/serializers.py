@@ -4,12 +4,14 @@ from .models import Kdrama, Kactor, Krole
 class KdramaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Kdrama
-        fields = ["title", "year", "rating", "total_rating", "image_url", "slug"]
+        fields = ["title", "start_year", "end_year", "genres", "image_url", "slug"]
+    
+    
 
 class KactorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Kactor
-        fields = ["name", "image_url", "slug"]
+        fields = ["name", "image_url", "occupations", "slug"]
 
 class KcastSerializer(serializers.ModelSerializer):
     kactor_name = serializers.CharField(source="kactor.name", read_only=True)

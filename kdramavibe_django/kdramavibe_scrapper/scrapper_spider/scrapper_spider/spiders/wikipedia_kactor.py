@@ -3,6 +3,7 @@ from ..items import KactorItem  # your Scrapy item
 import random
 import re
 from datetime import datetime
+from ..clean_data import cleaner
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
@@ -36,11 +37,11 @@ class WikipediaKactorsSpider(scrapy.Spider):
     allowed_domains = ["en.wikipedia.org"]
     start_urls = ["https://en.wikipedia.org/wiki/List_of_South_Korean_male_actors", "https://en.wikipedia.org/wiki/List_of_South_Korean_actresses"]
 
-    # custom_settings = {
-    #     "ITEM_PIPELINES": {
-    #         "kdramavibe_scrapper.scrapper_spider.scrapper_spider.pipelines.WikipediaKactorsPipeline": 300,
-    #     }
-    # }
+    custom_settings = {
+        "ITEM_PIPELINES": {
+            "kdramavibe_scrapper.scrapper_spider.scrapper_spider.pipelines.WikipediaKactorPipeline": 300,
+        }
+    }
 
     def start_requests(self):
         for url in self.start_urls:
@@ -77,37 +78,107 @@ class WikipediaKactorsSpider(scrapy.Spider):
     def parse_kdrama(self, response):
         item = response.meta['item']
         item['name'] = response.css("h1#firstHeading span.mw-page-title-main::text").get()
-        infobox = response.css("table.infobox.biography")
-        
-        birthplace_div = infobox.css("th:contains('Born') + td div.birthplace")
-        birthplace_text = (birthplace_div.xpath('string()').get() or '').strip()
-        item['birthplace'] = birthplace_text if birthplace_text else None
+        item['description'] = self.get_description(response)
 
-        # --- Birthday & Age ---
-        birthday_str = infobox.css("th:contains('Born') + td span.bday::text").get()
-        if birthday_str:
-            birthday_date = datetime.strptime(birthday_str, '%Y-%m-%d').date()
-            today = datetime.today().date()
-            age = today.year - birthday_date.year - ((today.month, today.day) < (birthday_date.month, birthday_date.day))
+        infobox_sel = response.css(
+            "table.infobox.biography, table.infobox.vcard, table.infobox.plainlist"
+        )
+
+        infobox = infobox_sel[0] if infobox_sel else None 
+
+        if infobox: 
+            alt_name_selectors = ", ".join([
+                f"th:contains('{field}') + td::text, th:contains('{field}') + td *:not(style):not(span)::text"
+                for field in ALT_NAME_FOR_NAMES
+            ])
+            birthname_div = birthplace_div = infobox.css("th:contains('Born') + td div.nickname") 
+            birthname_text = (birthname_div.xpath('string()').get() or '').strip()
+                
+            alt_names = infobox.css(alt_name_selectors).getall()
+            if birthname_text:
+                alt_names.append(birthname_text)
+
+            item['alternate_names'] = alt_names
+
+            birthplace_div = infobox.css("th:contains('Born') + td div.birthplace")
+            birthplace_text = (birthplace_div.xpath('string()').get() or '').strip()
+
+            if not birthplace_text:
+                birthplace_td = infobox.css("th:contains('Origin') + td")
+                birthplace_text = (birthplace_td.xpath('string()').get() or '').strip()
+            item['birthplace'] = birthplace_text if birthplace_text else None
+
+            # --- Birthday & Age ---
+            birthday_str = infobox.css("th:contains('Born') + td span.bday::text").get()
+            if birthday_str:
+                birthday_date = datetime.strptime(birthday_str, '%Y-%m-%d').date()
+                today = datetime.today().date()
+                age = today.year - birthday_date.year - ((today.month, today.day) < (birthday_date.month, birthday_date.day))
+            else:
+                birthday_date = None
+                age = None
+
+            item['birthday'] = birthday_date
+            item['age'] = age
+
+            years_active = infobox.xpath(
+                'string(.//tr[th[contains(normalize-space(translate(., "\u00A0", " ")), "Years active")]]/td)'
+            ).get()
+            item['years_active'] = years_active.strip() if years_active else None
+
+
+            item['occupations'] = infobox.css("th:contains('Occupation') + td::text, th:contains('Occupation') +  td *:not(style)::text").getall()
+            item['agent'] = infobox.css("th:contains('Agent') + td::text, th:contains('Agent') + td *:not(style)::text").get()
+            
+            item['height'] = infobox.css("th:contains('Height') + td::text, th:contains('Height') +  td *:not(style)::text").get()
+
+            item['partner_or_spouse'] = self.get_partner_or_spouse(infobox) 
+            item['children'] = self.get_children(infobox)       
+            item['image_url'] = f'https:{infobox.css("td.infobox-image a img.mw-file-element::attr(src)").get()}'
+
+        yield item
+    
+
+   
+    def get_description(self, response):
+        biography_text = []
+
+        # Try to locate infobox biography
+        infobox_sel = response.css(
+            "table.infobox.biography, table.infobox.vcard, table.infobox.plainlist"
+        )
+
+        infobox = infobox_sel[0] if infobox_sel else None
+        if infobox:
+            # Start after infobox until next section
+            elements = infobox.xpath('following-sibling::*')
         else:
-            birthday_date = None
-            age = None
+            # Fallback: start from content area if no infobox
+            elements = response.xpath('//div[@id="mw-content-text"]/*')
 
-        item['birthday'] = birthday_date
-        item['age'] = age
+        for sibling in elements:
+            # Stop at next major section heading
+            if sibling.xpath('self::div[contains(@class,"mw-heading")] | self::h2'):
+                break
 
-        item['description'] = self.get_description(infobox)
-        print('\n******\n', infobox.css("th:contains('Years active') + td::text"), '\n******\n')
-        years_active_texts = infobox.xpath(
-            ".//tr[th[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'years active')]]//td//text()"
-        ).getall()
-        
+            # Only capture paragraphs and maybe short lists
+            if sibling.root.tag == 'p':
+                text = sibling.xpath('string()').get()
+                if text and text.strip():
+                    biography_text.append(text.strip())
 
-        item['occupations'] = infobox.css("th:contains('Occupation') + td::text, th:contains('Occupation') +  td *:not(style)::text").getall()
-        item['agent'] = infobox.css("th:contains('Agent') + td::text, th:contains('Agent') + td *:not(style)::text").get()
-        
-        item['height'] = infobox.css("th:contains('Height') + td::text, th:contains('Height') +  td *:not(style)::text").get()
-        
+            elif sibling.root.tag in ['ul', 'ol']:
+                for li in sibling.xpath('.//li'):
+                    li_text = li.xpath('string()').get()
+                    if li_text and li_text.strip():
+                        biography_text.append(li_text.strip())
+
+        # Join and clean text
+        full_text = " ".join(biography_text)
+        full_text = re.sub(r'\[\d+\]', '', full_text)  # remove citation markers like [1]
+        return full_text.strip() if full_text else None
+
+    def get_partner_or_spouse(self, infobox):
         partner_texts = infobox.css(
             "th:contains('Spouse') + td::text, "
             "th:contains('Spouse') + td *:not(style)::text, "
@@ -115,26 +186,54 @@ class WikipediaKactorsSpider(scrapy.Spider):
             "th:contains('Partner') + td *:not(style)::text"
         ).getall()
 
-        # Clean and join
-        partner_texts = [p.strip() for p in partner_texts if p.strip()]
-        item['partner_or_spouse'] = ", ".join(partner_texts) if partner_texts else None        
-        item['image_url'] = f'https:{infobox.css("td.infobox-image a img.mw-file-element::attr(src)").get()}'
+        # --- Clean and normalize ---
+        cleaned = []
+        for p in partner_texts:
+            text = p.strip()
+            if not text:
+                continue
+            text = re.sub(r"[\u200b\u200c\u200d\uFEFF]", "", text)
+            # Remove stray commas and semicolons around parentheses
+            text = re.sub(r"\s*,\s*(?=[);])", "", text)
+            # Normalize multiple commas/spaces
+            text = re.sub(r",\s*,+", ", ", text)
+            text = re.sub(r"\s{2,}", " ", text)
+            cleaned.append(text)
 
-        
-        yield item
+        # Join and strip dangling punctuation
+        partner_str = " ".join(cleaned)
+        partner_str = re.sub(r"\s*([,;])\s*", r"\1 ", partner_str)
+        partner_str = partner_str.strip(" ,;")
+
+        return partner_str if partner_str else None
     
+    def get_children(self, infobox):
+        children_raw = infobox.xpath('string(.//tr[th[contains(text(), "Children")]]/td)').get()
+        children_raw = children_raw.strip() if children_raw else ""
 
-    def get_description(self, infobox):
-        biography_text = []
-        
-        if infobox:
-            # Collect all following siblings until the next div with h2
-            for sibling in infobox.xpath('following-sibling::*'):
-                if sibling.xpath("self::div[contains(@class,'mw-heading')]"):
-                    break
-                if sibling.root.tag == 'p':
-                    text = sibling.xpath('string()').get()
-                    if text:
-                        biography_text.append(text.strip())
+        if children_raw:
+            # Remove zero-width characters and clean spaces
+            children_raw = re.sub(r"[\u200b\u200c\u200d\uFEFF]", "", children_raw)
+            children_raw = re.sub(r"\s+", " ", children_raw)
 
-        return " ".join(biography_text)
+            children_list = []
+
+            # Detect if there’s a number (e.g., "2", "3 children")
+            num_match = re.search(r'\b(\d+)\b', children_raw)
+            if num_match:
+                children_list.append(int(num_match.group(1)))
+
+            # Extract possible names (proper nouns)
+            name_matches = re.findall(r"\b[A-Z][a-z]+(?:\s[A-Z][a-z]+)*\b", children_raw)
+
+            # Filter out common non-name words
+            blacklist = {"Child", "Children", "Including"}
+            names = [n for n in name_matches if n not in blacklist]
+
+            if names:
+                children_list.extend(names)
+
+            # Store either structured list or fallback text
+            return children_list if children_list else [children_raw]
+        else:
+            return []

@@ -43,8 +43,6 @@ class WikipediaKdramaPipeline:
         adapter = ItemAdapter(cleaned_item)
 
         if adapter.get('title'):
-            
-
             await sync_to_async(self.save_or_update_kdrama)(adapter)
             return item
   
@@ -76,7 +74,6 @@ class WikipediaKdramaPipeline:
                 slug=slug,
                 defaults={
                     "name": actor_name,
-                    "slug": slugify(actor_name),
                     "wikipedia_url": actor_url,  # ✅ make sure URL is stored
                 }
             )

@@ -36,5 +36,7 @@ class KactorItem(scrapy.Item):
     partner_or_spouse = scrapy.Field()
     wikipedia_url = scrapy.Field()
     image_url = scrapy.Field()
+    alternate_names = scrapy.Field()
+    children = scrapy.Field()
 
    
