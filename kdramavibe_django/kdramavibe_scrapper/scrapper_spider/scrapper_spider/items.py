@@ -31,7 +31,7 @@ class KactorItem(scrapy.Item):
     age = scrapy.Field()
     occupations = scrapy.Field()      
     years_active = scrapy.Field()  
-    agent = scrapy.Field()
+    agents = scrapy.Field()
     height = scrapy.Field()  
     partner_or_spouse = scrapy.Field()
     wikipedia_url = scrapy.Field()

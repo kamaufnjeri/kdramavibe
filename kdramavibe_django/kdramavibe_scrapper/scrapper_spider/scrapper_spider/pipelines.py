@@ -18,20 +18,32 @@ class WikipediaKactorPipeline:
         cleaned_item = cleaner.clean_dict(item)
         adapter = ItemAdapter(cleaned_item)
 
-        if adapter.get('name'):
+        if adapter.get('name') and adapter.get('wikipedia_url'):
+            if adapter.get('image_url') and adapter.get('image_url') == "https:None":
+                adapter['image_url'] = None
             await sync_to_async(self.save_or_update_kactor)(adapter)
             return item
   
         else:
-            raise ValueError("Kactor name required")
+            raise ValueError("Kactor name  and wikipedia url required")
         
 
     def save_or_update_kactor(self, item):
         # Save or update the Kdrama
-        kactor, _ = Kactor.objects.update_or_create(
-            slug=slugify(item["name"]),
-            defaults=item
-        )
+        wikipedia_url = item.get("wikipedia_url")
+
+        try:
+            kactor = Kactor.objects.get(wikipedia_url=wikipedia_url)
+            # Update only fields that are not None
+            for field, value in item.items():
+                if value:
+                    setattr(kactor, field, value)
+            kactor.save()
+        except Kactor.DoesNotExist:
+            # Create new actor
+            kactor = Kactor.objects.create(
+                **item
+            )
 
         return kactor
 
@@ -42,49 +54,54 @@ class WikipediaKdramaPipeline:
         cleaned_item = cleaner.clean_dict(item)
         adapter = ItemAdapter(cleaned_item)
 
-        if adapter.get('title'):
+        if adapter.get('title') and adapter.get('wikipedia_url'):
+            if adapter.get('image_url') and adapter.get('image_url') == "https:None":
+                adapter['image_url'] = None
             await sync_to_async(self.save_or_update_kdrama)(adapter)
             return item
   
         else:
-            raise ValueError("Kdrama title required")
+            raise ValueError("Kdrama title and wikipedia url required")
         
 
     def save_or_update_kdrama(self, item):
         kactors = item.pop('kactors', [])
 
-        # Save or update the Kdrama
-        kdrama, _ = Kdrama.objects.update_or_create(
-            slug=slugify(item["title"]),
-            defaults=item
-        )
+        # Get existing Kdrama if it exists
+        try:
+            kdrama = Kdrama.objects.get(wikipedia_url=item["wikipedia_url"])
+            # Only update fields that are not None
+            for field, value in item.items():
+                if value:
+                    setattr(kdrama, field, value)
+            kdrama.save()
+        except Kdrama.DoesNotExist:
+            # Create new if not exists
+            kdrama = Kdrama.objects.create(**item)
 
+        # Now handle kactors (optional)
+        
         for actor_data in kactors:
-            actor_name = actor_data.get('actor', None)
-            actor_url = actor_data.get('url').strip().rstrip('/') if actor_data.get('url') else None
-            
-            role_name = actor_data.get('role')
+            actor_name = actor_data.get('actor_name')
+            actor_url = actor_data.get('actor_url')
 
-            if not actor_name:
+            role_name = actor_data.get('role_name')
+
+            if not actor_name and not actor_url:
                 continue
 
-            slug = slugify(actor_name)
-
-            kactor, _ = Kactor.objects.update_or_create(
-                slug=slug,
-                defaults={
-                    "name": actor_name,
-                    "wikipedia_url": actor_url,  # ✅ make sure URL is stored
-                }
-            )
-
-            # Save or update the relationship (Krole)
-            Krole.objects.update_or_create(
-                kdrama=kdrama,
-                kactor=kactor,
-                defaults={"role_name": role_name}
-            )
-
+            # Only get or create, no updating
+            try:
+                kactor = Kactor.objects.get(wikipedia_url=actor_url)
+                # Save or update the relationship (Krole)
+                Krole.objects.update_or_create(
+                    kdrama=kdrama,
+                    kactor=kactor,
+                    defaults={"role_name": role_name}
+                )
+            except Kactor.DoesNotExist:
+                continue
+            
         return kdrama
 
         

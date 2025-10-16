@@ -17,7 +17,7 @@ class BaseModel(models.Model):
 
 
 class Kdrama(BaseModel):
-    title = models.CharField(max_length=255, unique=True)
+    title = models.CharField(max_length=255)
     start_year = models.CharField(max_length=10, blank=True, null=True)
     end_year = models.CharField(max_length=10, blank=True, null=True)
     rating = models.FloatField(blank=True, null=True)
@@ -25,21 +25,27 @@ class Kdrama(BaseModel):
     plot = models.TextField(blank=True, null=True)
     writers = models.JSONField(blank=True, null=True)
     languages = models.JSONField(blank=True, null=True)
-    country = models.CharField(blank=True, null=True)
+    country = models.CharField(max_length=255, blank=True, null=True)
     directors = models.JSONField(blank=True, null=True)
     wikipedia_url = models.URLField(unique=True)
-    image_url = models.URLField(blank=True, null=True)
+    image_url = models.URLField(max_length=500, blank=True, null=True)
     alternate_titles = models.JSONField(blank=True, null=True)
     genres = models.JSONField(blank=True, null=True)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     episodes = models.JSONField(blank=True, null=True)
     seasons = models.CharField(max_length=10, blank=True, null=True)
     networks = models.JSONField(blank=True, null=True)
-    running_time = models.CharField(max_length=50, blank=True, null=True)
+    running_time = models.CharField(max_length=255, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Kdrama.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -52,28 +58,34 @@ class Kactor(BaseModel):
         ('female', 'Female')
     ]
 
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     alternate_names = models.JSONField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES, null=True, blank=True)
-    birthday = models.CharField(blank=True, null=True)
-    birthplace = models.CharField(blank=True, null=True)
+    birthday = models.DateField(blank=True, null=True)
+    birthplace = models.CharField(max_length=255, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     occupations = models.JSONField(blank=True, null=True)  
     children = models.JSONField(blank=True, null=True)    
-    years_active = models.CharField(max_length=50, blank=True, null=True)  
-    agent = models.CharField(max_length=255, blank=True, null=True)
+    years_active = models.CharField(max_length=255, blank=True, null=True)  
+    agents = models.JSONField(blank=True, null=True) 
     height = models.CharField(max_length=50, blank=True, null=True)  
     partner_or_spouse = models.CharField(max_length=255, blank=True, null=True)
     wikipedia_url = models.URLField(unique=True, blank=True, null=True)
-    image_url = models.URLField(blank=True, null=True)
-    slug = models.SlugField(unique=True, blank=True)
+    image_url = models.URLField(max_length=500, blank=True, null=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     kdramas = models.ManyToManyField('Kdrama', through='Krole')
 
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            base_slug = slugify(self.name)
+            slug = base_slug
+            counter = 1
+            while Kactor.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
         super().save(*args, **kwargs)
 
     def __str__(self):

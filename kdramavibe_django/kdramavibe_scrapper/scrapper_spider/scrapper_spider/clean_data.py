@@ -3,7 +3,7 @@ import ftfy
 
 class DataCleaner:
     def __init__(self):
-        self.ref_pattern = re.compile(r'\[\d+\]')  # remove [1], [2]
+        self.ref_pattern = re.compile(r'\[(\d+|[a-z]+)\]', re.IGNORECASE)  # remove [1], [2]
         self.edge_pattern = re.compile(r'^[,–\[\]\s]+|[,\[\]\s]+$')  # trim commas/brackets
         self.space_pattern = re.compile(r'\s+')  # collapse multiple spaces
 

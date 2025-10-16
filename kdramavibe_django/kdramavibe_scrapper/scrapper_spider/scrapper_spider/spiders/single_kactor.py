@@ -32,10 +32,9 @@ ALT_NAME_FOR_NAMES = [
     "Birth name",
 ]
 
-class WikipediaKactorsSpider(scrapy.Spider):
-    name = "wiki_kactors"
+class SingleKactorSpider(scrapy.Spider):
+    name = "single_kactor"
     allowed_domains = ["en.wikipedia.org"]
-    start_urls = ["https://en.wikipedia.org/wiki/List_of_South_Korean_male_actors", "https://en.wikipedia.org/wiki/List_of_South_Korean_actresses"]
 
     custom_settings = {
         "ITEM_PIPELINES": {
@@ -43,40 +42,29 @@ class WikipediaKactorsSpider(scrapy.Spider):
         }
     }
 
-    def start_requests(self):
-        for url in self.start_urls:
-            if 'actresses' in url:
-                gender = 'female'
-            else:
-                gender = 'male'
+    def __init__(self, start_url=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if start_url is None:
+            raise ValueError("You must provide start_url!")
+        self.start_urls = [start_url]
 
-            headers = {
-                "User-Agent": random.choice(USER_AGENTS),
-                "Accept-Language": "en-US,en;q=0.9",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            }
-            yield scrapy.Request(
-                url=url,
-                callback=self.parse,
-                headers=headers,
-                meta={"gender": gender}
-            )
+    def start_requests(self):        
+        headers = {
+            "User-Agent": random.choice(USER_AGENTS),
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        }
+        yield scrapy.Request(
+            url=self.start_urls[0],
+            callback=self.parse,
+            headers=headers
+        )
 
 
     def parse(self, response):
-        # Get links to all drama pages
-        for actor in response.css("div#mw-content-text div.div-col ul li a"):
-            full_url = response.urljoin(actor.attrib['href'])
-            item = KactorItem()
-            item['gender'] = response.meta['gender']
-            item['wikipedia_url'] = full_url
-
-            yield scrapy.Request(url=full_url, callback=self.parse_kdrama,
-                headers=AJAX_HEADERS, meta={"item": item})
-
-        
-    def parse_kdrama(self, response):
-        item = response.meta['item']
+        url = response.url
+        item = KactorItem()
+        item['wikipedia_url'] = url
         item['name'] = response.css("h1#firstHeading span.mw-page-title-main::text").get()
         item['description'] = self.get_description(response)
 

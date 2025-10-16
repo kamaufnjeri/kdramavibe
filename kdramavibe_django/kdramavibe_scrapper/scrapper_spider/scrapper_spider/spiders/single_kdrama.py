@@ -57,16 +57,21 @@ ALT_NAMES_FOR_CASTS = [
     "Guest Characters"
 ]
 
-class WikipediaKdramasSpider(scrapy.Spider):
-    name = "wiki_kdramas"
+class SingleKdramaSpider(scrapy.Spider):
+    name = "single_kdrama"
     allowed_domains = ["en.wikipedia.org"]
-    start_urls = ["https://en.wikipedia.org/wiki/List_of_Korean_dramas"]
-
+   
     custom_settings = {
         "ITEM_PIPELINES": {
             "kdramavibe_scrapper.scrapper_spider.scrapper_spider.pipelines.WikipediaKdramaPipeline": 300,
         }
     }
+
+    def __init__(self, start_url=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if start_url is None:
+            raise ValueError("You must provide start_url!")
+        self.start_urls = [start_url]
 
     def start_requests(self):
         headers = {
@@ -80,20 +85,11 @@ class WikipediaKdramasSpider(scrapy.Spider):
             headers=headers
         )
 
-
-    def parse(self, response):
-        # Get links to all drama pages
-        for drama in response.css("div#mw-content-text ul li i a"):
-            full_url = response.urljoin(drama.attrib['href'])
-            item = KdramaItem()
-            item['wikipedia_url'] = full_url
-
-            yield scrapy.Request(url=full_url, callback=self.parse_kdrama,
-                headers=AJAX_HEADERS, meta={"item": item})
-
         
-    def parse_kdrama(self, response):
-        item = response.meta['item']
+    def parse(self, response):
+        url = response.url
+        item = KdramaItem()
+        item['wikipedia_url'] = url        
         item['title'] = response.css("h1#firstHeading i::text").get()
         infobox = response.css("table.infobox.ib-tv")
         item['genres'] = infobox.css("th:contains('Genre') + td::text, th:contains('Genre') + td *:not(style)::text").getall()
@@ -184,7 +180,6 @@ class WikipediaKdramasSpider(scrapy.Spider):
                                 'actor_url': response.urljoin(actor_url)
                             })
 
-                # ---------- Handle tables ----------
                 if sibling.root.tag == 'table':
                     rows = sibling.xpath('.//tr')
                     if not rows:
@@ -224,7 +219,7 @@ class WikipediaKdramasSpider(scrapy.Spider):
                                 'role_name': role_name if role_name else None,
                                 'actor_url': actor_url
                             })
-            # Stop after first matching section
+                            # Stop after first matching section
             break
 
         return casts
