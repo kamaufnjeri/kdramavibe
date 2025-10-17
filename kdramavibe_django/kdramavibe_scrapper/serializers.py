@@ -11,7 +11,7 @@ class KdramaSerializer(serializers.ModelSerializer):
 class KactorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Kactor
-        fields = ["name", "image_url", "occupations", "slug"]
+        fields = ["name", "image_url", "slug", "gender", "age"]
 
 class KcastSerializer(serializers.ModelSerializer):
     kactor_name = serializers.CharField(source="kactor.name", read_only=True)
@@ -21,13 +21,35 @@ class KcastSerializer(serializers.ModelSerializer):
         model = Krole
         fields = ["role_name", "kactor_name", "kactor_slug"]
 
+from rest_framework import serializers
+from .models import Krole
+
 class KactorDramaSerializer(serializers.ModelSerializer):
     kdrama_title = serializers.CharField(source="kdrama.title", read_only=True)
     kdrama_slug = serializers.SlugField(source="kdrama.slug", read_only=True)
+    year = serializers.SerializerMethodField()
 
     class Meta:
         model = Krole
-        fields = ["kdrama_title", "kdrama_slug"]
+        fields = [
+            "kdrama_title",
+            "kdrama_slug",
+            "role_name",
+            "year",
+        ]
+
+    def get_year(self, obj):
+        start = getattr(obj.kdrama, "start_year", None)
+        end = getattr(obj.kdrama, "end_year", None)
+        if start and end:
+            return f"{start}–{end}" if start != end else str(start)
+        elif start:
+            return str(start)
+        elif end:
+            return str(end)
+        else:
+            return None
+
 
 class KactorDetailSerializer(serializers.ModelSerializer):
     kdramas = KactorDramaSerializer(source="kactors_roles", many=True, read_only=True)
