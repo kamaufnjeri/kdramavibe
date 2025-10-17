@@ -3,8 +3,8 @@ import Image from "next/image";
 // app/loading.tsx
 export default function GlobalLoading() {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-gray-200">
-=      <div className="relative w-16 h-16">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] text-gray-200">
+      <div className="relative w-16 h-16">
         <div
           className="absolute inset-0 animate-spin rounded-full h-16 w-16 border-t-4 border-pink-600 border-b-4 mb-4 flex items-center justify-center
       "

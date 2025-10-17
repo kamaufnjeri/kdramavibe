@@ -1,3 +1,7 @@
+import AboutDetails from "@/components/about/AboutDetails";
+
 export default function AboutPage () {
-    return (<div>About page</div>)
+    return (<div>
+        <AboutDetails/>
+    </div>)
 }

@@ -16,11 +16,11 @@ export default function GlobalError({ error, reset }: Props) {
   }, [error]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-gray-200 p-4">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] text-gray-200 p-4">
       <h1 className="text-4xl font-bold text-pink-500 mb-4">
         Something went wrong!
       </h1>
-      <p className="mb-4 text-center text-normal">
+      <p className="mb-4 text-center text-text">
         We encountered an unexpected error.
       </p>
       <p className="text-accent">{error.message}</p>

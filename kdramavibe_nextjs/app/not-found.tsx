@@ -3,9 +3,9 @@ import { FaHome } from "react-icons/fa";
 
 export default function GlobalNotFound() {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-gray-200 p-4">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] text-gray-200 p-4">
       <h1 className="text-6xl font-bold text-pink-500 mb-4">404</h1>
-      <h2 className="text-2xl font-semibold mb-4 text-normal">Page Not Found</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-text">Page Not Found</h2>
       <p className="mb-6 text-center max-w-md text-accent">
         The page you are looking for does not exist.
       </p>
