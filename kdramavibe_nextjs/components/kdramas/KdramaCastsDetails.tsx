@@ -38,7 +38,7 @@ const KdramaCastsDetails: React.FC<KdramaCastsProps> = ({ kactors }) => {
                   </Link>
 
                   {kactor.role_name && (
-                    <p className="pt-1 text-sm text-gray-500">
+                    <p className="pt-1 text-sm">
                       {capitalize(kactor.role_name)}
                     </p>
                   )}

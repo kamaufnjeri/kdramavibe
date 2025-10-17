@@ -77,12 +77,11 @@ html {
   border-radius: 6px;
 }
 
-@media (min-width: 640px) {
   .smooth-dropdown {
     transition: max-height 0.3s ease-out, border 0.3s ease-out;
     overflow: hidden;
   }
-}
+
 
 .transition-class {
   transition: all 0.3s ease;
