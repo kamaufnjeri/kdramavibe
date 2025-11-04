@@ -145,13 +145,13 @@ const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         </div>
        
       </form>
-         <div className='flex flex-wrap justify-between items-end w-full'>
+         <div className='flex sm:flex-row gap-2 flex-col items-end sm:justify-between'>
 <OrderByOptions selectedOrderBy={filters.ordering} handleChange={handleChange}/>
       <PageSelect selectedPage={filters.page} handlePageChange={handlePageChange} noOfPages={noOfPages}/>
 
       </div>
       <div>
-      <ul className='flex flex-wrap gap-3 p-2'>
+      <ul className='flex flex-wrap gap-2 px-2'>
         {pillsFilters && Object.entries(pillsFilters).map(([key, value]) => 
           (value && !['ordering', 'page'].includes(key)) ? (
             <li key={key}>
