@@ -11,16 +11,18 @@ interface PageProps {
 
 
 export default async function KActorsPage({ searchParams }: PageProps) {
-  const { name = '', age =  '', gender = '', page = "1" } = await searchParams ?? {};
-  const kactorsResponse = await getKactors({ name, age, gender, page });
+  const { name = '', age =  '', gender = '', ordering = "", page = "1" } = await searchParams ?? {};
+  const kactorsResponse = await getKactors({ name, age, gender, ordering, page });
 
   return (
     
     <div>
+      <Banner/>
      <KactorsFilterSection searchParams={{
       name,
       gender,
       age,
+      ordering,
       page
      }}
   

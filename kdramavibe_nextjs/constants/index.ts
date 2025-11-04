@@ -2,6 +2,24 @@ export const WOMAN_PLACEHOLDER = "/images/woman.png";
 export const MAN_PALCEHOLDER = "/images/man.png";
 export const PLACEHOLDER = "/images/placeholder.png";
 
+export const ORDERBY_OPTIONS: { name: string, value: string}[] = [
+  { value: 'title_asc', name: 'Title (A–Z)' },
+  { value: 'title_desc', name: 'Title (Z–A)' },
+  { value: 'votes_asc', name: 'Votes (Ascending)' },
+  { value: 'votes_desc', name: 'Votes (Descending)' },
+  { value: 'rating_asc', name: 'Rating (Ascending)' },
+  { value: 'rating_desc', name: 'Rating (Descending)' },
+  { value: 'year_asc', name: 'Year (Oldest First)' },
+  { value: 'year_desc', name: 'Year (Newest First)' },
+];
+export const KACTOR_ORDERBY_OPTIONS: { name: string, value: string}[] = [
+  { value: 'name_asc', name: 'Name (A–Z)' },
+  { value: 'name_desc', name: 'Name (Z–A)' },
+  { value: 'votes_asc', name: 'Votes (Ascending)' },
+  { value: 'votes_desc', name: 'Votes (Descending)' },
+  { value: 'age_asc', name: 'Age (Ascending)' },
+  { value: 'age_desc', name: 'Age (Descending)' },
+];
 export const GENDER_OPTIONS: { name: string; value: string }[] = [
   { name: "All", value: "" },
   { name: "Woman", value: "Woman" },
@@ -209,4 +227,5 @@ export const GENRES_OPTIONS: string[] = [
   "Zombie apocalypse",
   "Zombie comedy"
 ];
+
 

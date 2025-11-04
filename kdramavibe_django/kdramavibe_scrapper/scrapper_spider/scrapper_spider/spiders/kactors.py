@@ -1,6 +1,8 @@
 import scrapy
-from ..items import KactorItem
+from ..items import DramaBeansKactorItem
 import random
+from datetime import datetime
+
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
@@ -47,11 +49,12 @@ class KactorsSpider(scrapy.Spider):
 
     def parse(self, response):
         for kactor in response.css("div.show-recap-detail"):
-            kactoritem = KactorItem()
+            kactoritem = DramaBeansKactorItem()
+            kactoritem["image_url"] = kactor.css("div.show-recap-detail-img img::attr(src)").get()
 
             kactoritem['name'] = kactor.css("div.show-title-name a::text").get(default="").strip()
             kactoritem["dramabeans_url"] = kactor.css("div.show-title-name a::attr(href)").get()
-            kactoritem["image_url"] = kactor.css("div.show-recap-detail-img img::attr(src)").get()
+            kactoritem["no_of_votes"] = kactor.css("div.show-number-review-rating span.number-rating::text").get()
             yield scrapy.Request(
                 url=kactoritem['dramabeans_url'],
                 callback=self.parse_kactor,
@@ -71,20 +74,25 @@ class KactorsSpider(scrapy.Spider):
     def parse_kactor(self, response):
         item = response.meta["item"]
 
-        bio_div = response.css("div#bind_tab_bio")
-        description_div = response.css("div.banner-description")
-
         item['name'] = response.css("div.banner-title a h3::text").get().strip() or item['name']
-        item['description'] = description_div.xpath("string()").get(default="").strip()
-        item['bio'] = bio_div.xpath("string()").get(default="").strip()
-        
-        item['kdramas'] = response.xpath(
-            '//div[@class="banner-type"]//span//a[@class="post_tags"]/text()'
-        ).getall()
 
         birthdays = response.css("p.title-rate::text").getall()
+
+        date_formats = ['%B %d, %Y', '%Y-%m-%d', '%d %B %Y']
+
         if birthdays:
-            item['birthday'] = birthdays[0].replace("birthday:", "").strip()
+            # Clean the string
+            birthday_str = birthdays[0].replace("Birthdate: ", "").strip()
+            
+            birthday_date = None
+            for fmt in date_formats:
+                try:
+                    birthday_date = datetime.strptime(birthday_str, fmt).date()
+                    break  # stop once we find a matching format
+                except ValueError:
+                    continue  # try the next format
+            
+            item['birthday'] = birthday_date  # will be a date object or None if all formats fail
 
         # ✅ Birthplace (first wrapper-user-rating p)
         places = response.css("div.wrapper-user-rating p::text").getall()

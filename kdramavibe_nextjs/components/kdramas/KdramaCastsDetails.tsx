@@ -1,6 +1,7 @@
 import { KdramaCasts } from '@/interfaces';
 import Link from 'next/link';
 import React from 'react';
+import ImageWithFallback from './ImageWithFallback';
 
 interface KdramaCastsProps {
   kactors: KdramaCasts[];
@@ -29,7 +30,18 @@ const KdramaCastsDetails: React.FC<KdramaCastsProps> = ({ kactors }) => {
                 key={kactor.kactor_slug}
                 className="p-3 w-full sm:w-1/2 lg:w-1/3"
               >
-                <div className="border border-border rounded-xl p-4 h-full flex flex-col hover:shadow-md transition">
+                <div className="border border-border rounded-xl p-4 h-full flex flex-row gap-3 hover:shadow-md transition">
+                 <div className="w-1/3 aspect-[3/4] overflow-hidden rounded-md bg-gray-100">
+  <ImageWithFallback
+    className="object-cover w-full h-full"
+    alt={kactor.kactor_name}
+    imageSrc={kactor.kactor_image_url}
+    gender={kactor.kactor_gender}
+  />
+</div>
+
+
+                  <div className='flex flex-col w-2/3'>
                   <Link
                     href={`/k-actors/${kactor.kactor_slug}`}
                     className="text-accent hover:underline font-semibold text-lg transition"
@@ -42,6 +54,7 @@ const KdramaCastsDetails: React.FC<KdramaCastsProps> = ({ kactors }) => {
                       {capitalize(kactor.role_name)}
                     </p>
                   )}
+                  </div>
                 </div>
               </li>
             ))}

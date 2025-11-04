@@ -2,19 +2,24 @@ export interface KdramasFilter {
     title: string;
     genre: string;
     year: string;
+    ordering: string;
     page: string;
+
   }
 
   export interface KactorsFilter {
     name: string;
     age: string;
     gender: string;
+    ordering: string;
     page: string;
   }
 
 export interface Kdrama {
     slug: string;
     title: string;
+    rating: string | null;
+    no_of_votes: string | null;
     start_year: string | null;
     end_year: string | null;
     genres: string[];
@@ -27,6 +32,8 @@ export interface Kactor {
     age: string | null;
     gender: "female" | "male" | null;
     image_url: string | null; 
+    no_of_votes: string | null;
+    dramabeans_image_url: string | null;
 }
 
  export interface KdramasResponse {
@@ -53,6 +60,8 @@ export interface KdramaCasts {
   role_name: string | null;
   kactor_name: string;
   kactor_slug: string;
+  kactor_image_url: string | null;
+  kactor_gender: "female" | "male";
 }
 
 export interface KdramaDetail {
@@ -60,8 +69,8 @@ export interface KdramaDetail {
   slug: string;  // required
   start_year?: string | null;
   end_year?: string | null;
-  rating?: number | null;
-  total_rating?: number | null;
+  rating?: string | null;
+  no_of_votes?: string | null;
   plot?: string | null;
   image_url?: string | null;
   wikipedia_url?: string | null;
@@ -69,7 +78,7 @@ export interface KdramaDetail {
   seasons?: string | null;
   running_time?: string | null;
   country?: string | null;
-
+  dramabeans_url?: string | null;
   writers?: string[] | null;
   directors?: string[] | null;
   languages?: string[] | null;
@@ -103,6 +112,10 @@ export interface KactorDetail {
   height?: string;
   partner_or_spouse?: string | null;
   wikipedia_url?: string;
+  no_of_votes: string | null;
+  dramabeans_image_url: string | null;
+  dramabeans_url: string | null;
+
   image_url?: string;
   slug: string;
   kdramas?: KactorDramas[];

@@ -1,7 +1,7 @@
 'use client'
 
 import { GENRES_OPTIONS } from '@/constants';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface GenresAutoCompleteProps {
   selectedGenre: string;
@@ -9,12 +9,17 @@ interface GenresAutoCompleteProps {
 }
 
 const GenresAutoComplete: React.FC<GenresAutoCompleteProps> = ({ selectedGenre, handleChange }) => {
+  const [inputValue, setInputValue] = useState<string>(selectedGenre);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const filtereGenres = GENRES_OPTIONS.filter((genre) => 
-    genre.toLowerCase().includes(selectedGenre.toLowerCase())
+    genre.toLowerCase().includes(inputValue.toLowerCase())
   );
 
+  useEffect(() => {
+    
+    setInputValue(selectedGenre);
+  }, [selectedGenre])
 
 
   return (
@@ -30,9 +35,9 @@ placeholder="Type a genre..."
     focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary
     hover:border-primary transition-colors duration-200
   "
-    value={selectedGenre}
+    value={inputValue}
     onChange={(e) => {
-     handleChange("genre", e.target.value);
+     setInputValue(e.target.value);
       setShowSuggestions(true);
     }}
     onFocus={() => setShowSuggestions(true)}
@@ -44,10 +49,12 @@ placeholder="Type a genre..."
           <li key={genre}
           className='cursor-pointer text-pink-200 hover:text-pink-400'
           onTouchStart={() => {
+            setInputValue(genre);
             handleChange("genre", genre);
             setShowSuggestions(false);
           }}
           onMouseDown={() => {
+            setInputValue(genre);
             handleChange("genre", genre);
             setShowSuggestions(false);
           }}

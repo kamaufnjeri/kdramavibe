@@ -11,8 +11,8 @@ interface PageProps {
 
 
 export default async function Home({ searchParams }: PageProps) {
-  const { title = '', genre =  '', year = '', page = "1" } = await searchParams ?? {};
-  const kdramasResponse = await getKdramas({ title, genre, year, page });
+  const { title = '', genre =  '', year = '', ordering = '', page = "1" } = await searchParams ?? {};
+  const kdramasResponse = await getKdramas({ title, genre, year, ordering, page });
 
   return (
     
@@ -22,6 +22,7 @@ export default async function Home({ searchParams }: PageProps) {
       title,
       genre,
       year,
+      ordering,
       page
      }}
   

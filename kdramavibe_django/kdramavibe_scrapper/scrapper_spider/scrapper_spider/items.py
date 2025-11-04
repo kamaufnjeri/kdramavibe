@@ -1,11 +1,24 @@
 import scrapy
 
+class DramaBeansKdramaItem(scrapy.Item):
+    title = scrapy.Field()
+    year = scrapy.Field()
+    rating = scrapy.Field()
+    no_of_votes = scrapy.Field()
+    dramabeans_url = scrapy.Field()
+
+class DramaBeansKactorItem(scrapy.Item):
+    name = scrapy.Field()
+    image_url = scrapy.Field()
+    birthplace = scrapy.Field()
+    birthday = scrapy.Field()
+    no_of_votes = scrapy.Field()
+    dramabeans_url = scrapy.Field()
+
 class KdramaItem(scrapy.Item):
     title = scrapy.Field()
     start_year = scrapy.Field()
     end_year = scrapy.Field()
-    rating = scrapy.Field()
-    total_rating = scrapy.Field()
     plot = scrapy.Field()
     languages = scrapy.Field()
     country = scrapy.Field()

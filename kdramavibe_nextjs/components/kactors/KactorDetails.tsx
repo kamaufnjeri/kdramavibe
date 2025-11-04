@@ -4,6 +4,7 @@ import Link from 'next/link'
 import KactorDramasDetails from './KactorDramasDetails'
 import ImageWithFallback from '../kdramas/ImageWithFallback'
 import DisplayList from '../kdramas/DisplayList'
+import { FaEye } from 'react-icons/fa'
 
 interface KactorDetailsProps {
   kactor: KactorDetail
@@ -14,7 +15,28 @@ const KactorDetails: React.FC<KactorDetailsProps> = ({ kactor }) => {
     <div className="flex flex-col gap-6 items-center justify-center w-full">
       <div className="rounded-2xl border border-border bg-background/60 shadow-sm 
                       text-text p-6 lg:w-3/4 w-full flex flex-col gap-6">
-        
+          {(kactor.no_of_votes && kactor.dramabeans_url) && (
+                  <div className="flex flex-wrap justify-between gap-1 items-center border border-accent/30 rounded-xl px-3 py-2 mt-2">
+                    <p className="text-sm text-purple-300 italic font-semibold tracking-wide">
+                      By <Link
+    href={kactor?.dramabeans_url}
+    target="_blank"
+    rel="noreferrer noopener"
+    className="text-accent not-italic hover:underline hover:text-pink-600 transition-colors duration-200"
+  >
+    Dramabeans
+  </Link>
+                    </p>
+                
+                      {kactor.no_of_votes && (
+                        <span className="inline-flex items-center gap-1 text-sm font-medium">
+                          <FaEye className="text-gray-400" size={14} />
+                          <span>{parseInt(kactor.no_of_votes).toLocaleString()}</span>
+                        </span>
+                      )}
+                    
+                  </div>
+                )}
         {/* 🏷️ Title + Years */}
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h1 className="font-extrabold text-3xl text-primary">{kactor.name}</h1>
@@ -30,8 +52,21 @@ const KactorDetails: React.FC<KactorDetailsProps> = ({ kactor }) => {
         </div>
 
         {/* 📺 Image + Info */}
-        <div className="flex flex-col-reverse lg:flex-row gap-6">
-          
+        <div className="flex flex-col gap-6">
+           <div className='flex flex-col sm:flex-row gap-2 justify-between w-full'>
+        <ImageWithFallback
+            alt={kactor.name}
+            imageSrc={kactor.image_url}
+            gender={kactor.gender ? kactor.gender : null}
+            className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
+          />
+           {kactor.dramabeans_image_url &&<ImageWithFallback
+            alt={kactor.name}
+            imageSrc={kactor.dramabeans_image_url}
+            gender={kactor.gender ? kactor.gender : null}
+            className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
+          />}
+</div>
 
           <div className="flex flex-col gap-5 flex-1">
             
@@ -87,13 +122,7 @@ const KactorDetails: React.FC<KactorDetailsProps> = ({ kactor }) => {
           </div>
           
         </div>
-        <ImageWithFallback
-            alt={kactor.name}
-            imageSrc={kactor.image_url}
-            gender={kactor.gender ? kactor.gender : null}
-            className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
-          />
-
+       
       </div>
        {/* 🔗 Source + Link */}
             <div className="flex items-center justify-between flex-wrap gap-3 pt-3 border-t border-border mt-2">

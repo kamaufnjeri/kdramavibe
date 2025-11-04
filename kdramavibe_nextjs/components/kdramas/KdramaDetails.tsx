@@ -4,6 +4,7 @@ import ImageWithFallback from './ImageWithFallback'
 import Link from 'next/link'
 import DisplayList from './DisplayList'
 import KdramaCastsDetails from './KdramaCastsDetails'
+import { FaEye, FaStar } from 'react-icons/fa'
 
 interface KdramaDetailsProps {
   kdrama: KdramaDetail
@@ -14,7 +15,40 @@ const KdramaDetails: React.FC<KdramaDetailsProps> = ({ kdrama }) => {
     <div className="flex flex-col gap-6 items-center justify-center w-full">
       <div className="rounded-2xl border border-border bg-background/60 shadow-sm 
                       text-text p-6 lg:w-3/4 w-full flex flex-col gap-6">
+           {((kdrama.rating || kdrama.no_of_votes) && kdrama.dramabeans_url) && (
+          <div className="flex flex-wrap justify-between gap-1 items-center border border-accent/30 rounded-xl px-3 py-2 mt-2">
+            <p className="text-sm text-purple-300 italic font-semibold tracking-wide">
+  By{" "}
+  <Link
+    href={kdrama?.dramabeans_url}
+    target="_blank"
+    rel="noreferrer noopener"
+    className="text-accent not-italic hover:underline hover:text-pink-600 transition-colors duration-200"
+  >
+    Dramabeans
+  </Link>
+</p>
+
         
+            <div className="flex items-center gap-4">
+              {kdrama.rating && (
+                <span className="inline-flex items-center gap-1 text-yellow-400 font-semibold text-sm">
+                  <FaStar className="text-yellow-400 " size={14} />
+                  <span>{kdrama.rating}</span>
+                </span>
+              )}
+        
+              {kdrama.no_of_votes && (
+                <span className="inline-flex items-center gap-1 text-sm font-medium">
+                  <FaEye className="text-gray-400" size={14} />
+                  <span>{parseInt(kdrama.no_of_votes).toLocaleString()}</span>
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+        
+                
         {/* 🏷️ Title + Years */}
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h1 className="font-extrabold text-3xl text-primary">{kdrama.title}</h1>

@@ -47,19 +47,53 @@ export default function AboutDetails() {
       </section>
 
       {/* Data Source */}
-      <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
-        <h2 className="text-3xl font-bold mb-4">Data & Sources</h2>
-        <p className="text-base leading-relaxed">
-          All data has been scraped and curated by me from {" "}
-          <Link
-            href="https://www.wikipedia.org/"
-            target="_blank"
-            className="text-accent hover:underline"
-          >
-            Wikipedia
-          </Link>. I used <strong>Next.js, Django, Scrapy, Python, and TypeScript</strong> to collect, process, and present the information efficiently.
-        </p>
-      </section>
+     <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
+  <h2 className="text-3xl font-bold mb-4">Data & Sources</h2>
+  <p className="text-base leading-relaxed text-gray-300">
+    All data has been researched, scraped, and curated by{" "}
+    <Link
+      href="http://florakamau.tech/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-accent font-semibold hover:underline"
+    >
+      me
+    </Link>{" "}
+    from{" "}
+    <Link
+      href="https://www.wikipedia.org/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-accent hover:underline"
+    >
+      Wikipedia
+    </Link>{" "}
+    (available under the{" "}
+    <Link
+      href="https://creativecommons.org/licenses/by-sa/3.0/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-accent hover:underline"
+    >
+      Creative Commons Attribution-ShareAlike License
+    </Link>
+    ) and{" "}
+    <Link
+      href="https://dramabeans.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-accent hover:underline"
+    >
+      Dramabeans
+    </Link>
+    . I used{" "}
+    <strong className="text-white">
+      Next.js, Django, Scrapy, Python, and TypeScript
+    </strong>{" "}
+    to collect, process, and present the information efficiently. All
+    trademarks, logos, and images belong to their respective owners.
+  </p>
+</section>
 
       {/* Future Developments */}
       <section className="rounded-2xl bg-background/80 p-6 shadow-lg">

@@ -36,7 +36,7 @@ const Header = () => {
 
       {/* Navigation Links */}
       <nav
-        className={`overflow-hidden smooth-dropdown transition-all duration-300 ease-out sm:overflow-visible sm:h-auto w-full ${
+        className={`overflow-hidden sm:smooth-dropdown transition-all duration-300 ease-out sm:overflow-visible sm:h-auto w-full ${
           showMenu  ? "max-h-96 opacity-100 sm:opacity-100 pointer-events-auto z-10"
             : "max-h-0 opacity-0 sm:opacity-100 sm:pointer-events-auto pointer-events-none lg:z-10 -z-0"
         

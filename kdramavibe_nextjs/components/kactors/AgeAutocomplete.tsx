@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface AgesAutoCompleteProps {
   selectedAge: string;
@@ -11,13 +11,17 @@ const AGES: number[] = Array.from({ length: 123 }, (_, i) => i);
 
 
 const AgesAutoComplete: React.FC<AgesAutoCompleteProps> = ({ selectedAge, handleChange }) => {
+  const [inputValue, setInputValue] = useState<string>(selectedAge);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const filtereAges = AGES.filter((age) => 
-    age.toString().includes(selectedAge.toString())
+    age.toString().includes(inputValue.toString())
   );
 
-
+useEffect(() => {
+  
+  setInputValue(selectedAge);
+}, [selectedAge]);
 
   return (
     <div className='w-full md:w-1/2 lg:w-1/4 relative p-2'>
@@ -32,9 +36,9 @@ placeholder="Type an age..."
     focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary
     hover:border-primary transition-colors duration-200
   "
-    value={selectedAge}
+    value={inputValue}
     onChange={(e) => {
-     handleChange("age", e.target.value);
+     setInputValue(e.target.value);
       setShowSuggestions(true);
     }}
     onFocus={() => setShowSuggestions(true)}
@@ -46,10 +50,12 @@ placeholder="Type an age..."
           <li key={age}
           className='cursor-pointer text-pink-200 hover:text-pink-400'
           onTouchStart={() => {
+            setInputValue(age.toString());
             handleChange("age", age.toString());
             setShowSuggestions(false);
           }}
           onMouseDown={() => {
+            setInputValue(age.toString());
             handleChange("age", age.toString());
             setShowSuggestions(false);
           }}

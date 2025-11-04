@@ -7,6 +7,8 @@ import { KactorsFilter } from '@/interfaces'
 import PageSelect from '../kdramas/PageSelect'
 import AgesAutoComplete from './AgeAutocomplete'
 import GendersSelect from './GenderSelect'
+import Pill from '../common/Pill'
+import OrderByOptions from './OrderByOptions'
 
 
 interface KactorFilterSectionProps {
@@ -16,6 +18,8 @@ interface KactorFilterSectionProps {
 
 const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams, noOfPages }) => {
   const [filters, setFilters] = useState<KactorsFilter>(searchParams);
+  const [pillsFilters, setPillsFilters] = useState<KactorsFilter>(searchParams);
+  
   const router = useRouter();
 
   const handleFormReset = () => {
@@ -23,8 +27,16 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
       name: '',
       age: '',
       gender: '',
+      ordering: '',
       page: '1'
     });
+    setPillsFilters({
+      name: '',
+      age: '',
+      gender: '',
+      ordering: '',
+      page: '1'
+    })
     router.push('/k-actors')
   }
 
@@ -33,6 +45,8 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
       ...(filtersToUse?.name ? { name: filtersToUse.name } : {}),
       ...(filtersToUse?.age ? { age: filtersToUse.age } : {}),
       ...(filtersToUse?.gender ? { gender: filtersToUse?.gender.toLowerCase() } : {}),
+      ...(filtersToUse?.ordering ? { ordering: filtersToUse.ordering } : {}),
+
     }).toString();
     return query;
   }
@@ -40,13 +54,28 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
     const updatedFilters = {...filters, [key]: value};
     setFilters(updatedFilters);
 
-    if (key === 'gender') {
-      const query = getQuery(updatedFilters);
+     if (['age', 'gender', 'ordering'].includes(key)) {
+      setPillsFilters(updatedFilters);
+      const query = getQuery(updatedFilters); // ✅ use updatedFilters
       router.push(`/k-actors/?${query}`);
     }
     
   }
+const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const target = e.target as HTMLInputElement;
+  const { name, value } = target;
 
+  if (e.key === 'Enter') {
+    e.preventDefault(); // prevent form submission
+
+    const updatedFilters = { ...filters, [name]: value };
+    setFilters(updatedFilters);
+    setPillsFilters(updatedFilters);
+
+    const query = getQuery(updatedFilters); // use updatedFilters
+    router.push(`/k-actors/?${query}`);
+  }
+};
   const handlePageChange = (pageNo: string) => {
     const updatedFilters = {...filters, page: pageNo};
     setFilters(updatedFilters);
@@ -54,6 +83,7 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
       ...(updatedFilters?.name ? { name: updatedFilters.name } : {}),
       ...(updatedFilters?.age ? { age: updatedFilters.age } : {}),
       ...(updatedFilters?.gender ? { gender: updatedFilters?.gender.toLowerCase() } : {}),
+      ...(updatedFilters?.ordering ? { ordering: updatedFilters.ordering } : {}),
       ...(updatedFilters?.page ? { page: updatedFilters?.page } : {}),
 
     }).toString();
@@ -61,10 +91,25 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
     router.push(`/k-actors/?${query}`);
   }
 
- 
+ const resetFilterField = (key: string, value: string) => {
+    const updatedFilters = {...filters, [key]: value};
+    setFilters(updatedFilters);
+    setPillsFilters(updatedFilters);
+    const query = new URLSearchParams({
+      ...(updatedFilters?.name ? { name: updatedFilters.name } : {}),
+      ...(updatedFilters?.age ? { genre: updatedFilters.age } : {}),
+      ...(updatedFilters?.gender ? { year: updatedFilters?.gender } : {}),
+      ...(updatedFilters?.ordering ? { ordering: updatedFilters.ordering } : {}),
+      ...(updatedFilters?.page ? { page: updatedFilters?.page } : {}),
+
+    }).toString();
+    router.push(`/k-actors/?${query}`);
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setPillsFilters(filters);
+
     const query = getQuery(filters);
 
     router.push(`/k-actors/?${query}`);
@@ -72,12 +117,14 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
 
 
   return (
-    <div className='w-full p-4 flex flex-col gap-4'>
+    <div className='w-full px-4 py-4 flex flex-col gap-4'>
       <form className="flex flex-wrap items-start md:items-center lg:items-center" onSubmit={handleSubmit}>
         <div className='w-full md:w-1/2 lg:w-1/4 p-2'>
           <input type="text" name='name' 
           value={filters.name}
           onChange={(e) => handleChange(e.target.name, e.target.value)}
+          onKeyDown={onKeyDown}
+
       placeholder="Type name..."
         className="
           w-full rounded-xl px-4 py-2
@@ -98,7 +145,27 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
         </div>
        
       </form>
+         <div className='flex flex-wrap justify-between items-end w-full'>
+<OrderByOptions selectedOrderBy={filters.ordering} handleChange={handleChange}/>
       <PageSelect selectedPage={filters.page} handlePageChange={handlePageChange} noOfPages={noOfPages}/>
+
+      </div>
+      <div>
+      <ul className='flex flex-wrap gap-3 p-2'>
+        {pillsFilters && Object.entries(pillsFilters).map(([key, value]) => 
+          (value && !['ordering', 'page'].includes(key)) ? (
+            <li key={key}>
+              <Pill
+                fieldKey={key}        // make sure it matches your Pill prop
+                value={value}
+                resetFilterField={resetFilterField} // your handler function
+              />
+            </li>
+          ) : null
+        )}
+      </ul>
+
+      </div>
     </div>
   )
 }

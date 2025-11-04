@@ -48,35 +48,47 @@ const Footer = () => {
                           href="https://www.florakamau.tech/#contact"
                           className="font-medium transition-colors duration-300 text-text hover:text-primary"
                         >
-                          Contact me
+                          Contact Me
                         </Link>
                         </li>
                 </ul>
       </section>
       </div>
-      <section className='self-center'>
+      <section className='self-center text-center'>
         <p className="text-primary">
           &copy; 2025 KDramaVibe. All rights reserved.
         </p>
-        <p className="text-sm ">
-  Data and text content on this site are sourced from
+       <p className="text-sm text-gray-300 leading-relaxed">
+  Data and text content on this site are sourced from{" "}
   <Link
     href="https://www.wikipedia.org/"
     target="_blank"
     rel="noopener noreferrer"
-    className="underline hover:text-pink-600"
+    className="underline hover:text-pink-500 font-medium"
   >
-{" "}Wikipedia
-  </Link>, available under the 
+    Wikipedia
+  </Link>{" "}
+  (available under the{" "}
   <Link
     href="https://creativecommons.org/licenses/by-sa/3.0/"
     target="_blank"
     rel="noopener noreferrer"
-    className="underline hover:text-pink-600"
+    className="underline hover:text-pink-500 font-medium"
   >
-    {" "}Creative Commons Attribution-ShareAlike License
-  </Link>.
+    Creative Commons Attribution-ShareAlike License
+  </Link>
+  ) and{" "}
+  <Link
+    href="https://dramabeans.com/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline hover:text-pink-500 font-medium"
+  >
+    Dramabeans
+  </Link>
+  . All trademarks and images belong to their respective owners.
 </p>
+
 
         </section>
     </footer>

@@ -20,8 +20,6 @@ class Kdrama(BaseModel):
     title = models.CharField(max_length=255)
     start_year = models.CharField(max_length=10, blank=True, null=True)
     end_year = models.CharField(max_length=10, blank=True, null=True)
-    rating = models.FloatField(blank=True, null=True)
-    total_rating = models.FloatField(blank=True, null=True)
     plot = models.TextField(blank=True, null=True)
     writers = models.JSONField(blank=True, null=True)
     languages = models.JSONField(blank=True, null=True)
@@ -75,6 +73,7 @@ class Kactor(BaseModel):
     image_url = models.URLField(max_length=500, blank=True, null=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     kdramas = models.ManyToManyField('Kdrama', through='Krole')
+    dramabeans_url = models.URLField(unique=True, blank=True, null=True)
 
 
     def save(self, *args, **kwargs):
@@ -99,3 +98,32 @@ class Krole(BaseModel):
 
     def __str__(self):
         return f"{self.actor.name} as {self.role_name} in {self.drama.title}"
+
+class DramabeansKdrama(BaseModel):
+    title = models.CharField(max_length=255)
+    year = models.CharField(max_length=10, blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
+    no_of_votes = models.FloatField(blank=True, null=True)
+    dramabeans_url = models.URLField(unique=True, blank=True, null=True)
+    kdrama = models.OneToOneField(
+        Kdrama,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        related_name="dramabeans_details",
+    )
+
+class DramabeansKactor(BaseModel):
+    name = models.CharField(max_length=255)
+    image_url = models.URLField(max_length=500, blank=True, null=True)
+    no_of_votes = models.FloatField(blank=True, null=True)
+    dramabeans_url = models.URLField(unique=True, blank=True, null=True)
+    birthday = models.DateField(max_length=255, blank=True, null=True)
+    birthplace = models.CharField(max_length=255, blank=True, null=True)
+    kactor = models.OneToOneField(
+        Kactor,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        related_name="dramabeans_details",
+    )

@@ -53,13 +53,8 @@ class KdramasSpider(scrapy.Spider):
             kdramaitem["title"] = kdrama.css("div.show-title-name a::text").get(default="").strip()
             kdramaitem["dramabeans_url"] = kdrama.css("div.show-title-name a::attr(href)").get()
             kdramaitem["rating"] = kdrama.css("div.show-rating span.review-rating::text").get()
-            kdramaitem["image_url"] = kdrama.css("div.show-recap-detail-img img::attr(src)").get()
-            yield scrapy.Request(
-                url=kdramaitem['dramabeans_url'],
-                callback=self.parse_kdrama,
-                headers=AJAX_HEADERS,
-                meta={"item": kdramaitem},
-            )
+            kdramaitem["no_of_votes"] = kdrama.css("div.show-number-review-rating span.number-rating::text").get()
+            yield kdramaitem
 
         # pagination
         next_page = response.css("a.next.page-numbers::attr(href)").get()
@@ -70,47 +65,47 @@ class KdramasSpider(scrapy.Spider):
                 headers=AJAX_HEADERS
             )
 
-    def parse_kdrama(self, response):
-        item = response.meta["item"]
-        description_div = response.css("div.banner-description")
+    # def parse_kdrama(self, response):
+    #     item = response.meta["item"]
+    #     description_div = response.css("div.banner-description")
 
-        item['rating']  = response.css('div.banner-title-rate span.rating::text').get() or item['rating']
-        item['total_rating']  = response.css('div.banner-title-rate span.total-rating::text').get()
-        item['description'] = description_div.xpath("string()").get(default="").strip()
-        item['genres'] = response.xpath(
-            '//div[@class="banner-type"]//span//a[@class="post_tags"]/text()'
-        ).getall()
+    #     item['rating']  = response.css('div.banner-title-rate span.rating::text').get() or item['rating']
+    #     item['total_rating']  = response.css('div.banner-title-rate span.total-rating::text').get()
+    #     item['description'] = description_div.xpath("string()").get(default="").strip()
+    #     item['genres'] = response.xpath(
+    #         '//div[@class="banner-type"]//span//a[@class="post_tags"]/text()'
+    #     ).getall()
 
-        show_id = response.css("input#show_id::attr(value)").get()
-        title = item['title'] or "Unknown"
+    #     show_id = response.css("input#show_id::attr(value)").get()
+    #     title = item['title'] or "Unknown"
 
-        ajax_url = (
-            "https://dramabeans.com/casts/"
-            f"?show_id={show_id}&tag={quote(title)}&order=desc&shows=shows&select_ajax=select_ajax"
-        )
+    #     ajax_url = (
+    #         "https://dramabeans.com/casts/"
+    #         f"?show_id={show_id}&tag={quote(title)}&order=desc&shows=shows&select_ajax=select_ajax"
+    #     )
 
-        yield scrapy.Request(
-            url=ajax_url,
-            callback=self.parse_casts,
-            headers=AJAX_HEADERS,
-            meta={"item": item},
-        )
+    #     yield scrapy.Request(
+    #         url=ajax_url,
+    #         callback=self.parse_casts,
+    #         headers=AJAX_HEADERS,
+    #         meta={"item": item},
+    #     )
 
-    def parse_casts(self, response):
-        item = response.meta["item"]
-        kactors_list = []
+    # def parse_casts(self, response):
+    #     item = response.meta["item"]
+    #     kactors_list = []
 
-        for cast in response.css("#show_casts .casts-detail"):
-            name = cast.css(".casts-name a::text").get()
-            role = cast.css(".casts-character-name::text").get()
-            dramabeans_url = cast.css(".casts-name a::attr(href)").get()
+    #     for cast in response.css("#show_casts .casts-detail"):
+    #         name = cast.css(".casts-name a::text").get()
+    #         role = cast.css(".casts-character-name::text").get()
+    #         dramabeans_url = cast.css(".casts-name a::attr(href)").get()
 
-            if name and role:
-                kactors_list.append({
-                    "name": name.strip(),
-                    "role": role.strip(),
-                    "dramabeans_url": dramabeans_url,
-                })
+    #         if name and role:
+    #             kactors_list.append({
+    #                 "name": name.strip(),
+    #                 "role": role.strip(),
+    #                 "dramabeans_url": dramabeans_url,
+    #             })
 
-        item["kactors"] = kactors_list
-        yield item
+    #     item["kactors"] = kactors_list
+    #     yield item

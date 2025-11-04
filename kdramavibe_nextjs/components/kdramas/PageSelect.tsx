@@ -11,7 +11,7 @@ const PageSelect: React.FC<PageSelectProps> = ({ selectedPage, handlePageChange,
     const pagesToShow = generatePagination(noOfPages, Number(selectedPage));
 
   return (
-    <div className='self-end'>
+    <div className='py-2'>
       <ul className='flex flex-wrap gap-4'>
        
         {pagesToShow.length > 0 && pagesToShow.map((page) => (<li key={page} >

@@ -1,0 +1,93 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<h1>Kdrama Comparison Results</h1>
+
+<form method="post" action="{% url 'admin:link-kactors' %}">
+    {% csrf_token %}
+    <table class="adminlist" border="1" cellpadding="6" cellspacing="0">
+        <tr>
+            <th><input type="checkbox" id="select-all"></th>
+            <th>Dramabeans Name</th>
+            <th>Wiki Name</th>
+            <th>Wiki Birthday</th>
+            <th>Dramabeans Birthday</th>
+            <th>Alternate Names</th>
+            <th>Wikipedia Image</th>
+            <th>Dramabeans Image</th>
+            <th>Best Score</th>
+            <th>Birthday Match</th>
+            <th>Is Match</th>
+        </tr>
+
+        {% for result in matches %}
+        <tr>
+            <td><input type="checkbox" name="selected" value="{{ result.dramabeans_id }}__{{ result.wiki_id }}"></td>
+            <td>{{ result.dramabeans_name }}</td>
+            <td>{{ result.wiki_name }}</td>
+            <td>{{ result.wiki_birthday }}</td>
+            <td>{{ result.dramabeans_birthday }}</td>
+
+            <td>
+                {% for alt in result.alternate_names %}
+                    <span>{{ alt }}</span>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% if result.wiki_image_url %}
+                    <img src="{{ result.wiki_image_url }}" alt="{{ result.wiki_name }}" style="max-height: 100px;">
+                {% else %}
+                    ❌
+                {% endif %}
+            </td>
+            <td>
+                {% if result.dramabeans_image_url %}
+                    <img src="{{ result.dramabeans_image_url }}" alt="{{ result.dramabeans_name }}" style="max-height: 100px;">
+                {% else %}
+                    ❌
+                {% endif %}
+            </td>
+            <td>{{ result.best_score|floatformat:2 }}%</td>
+            <td>{% if result.birthday_match %}✅{% else %}❌{% endif %}</td>
+
+            <td>{% if result.is_match %}✅{% else %}❌{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="11">No matches found.</td></tr>
+        {% endfor %}
+    </table>
+
+    <button type="submit" class="button">Link Selected</button>
+</form>
+
+<p><span id="selected-count">0</span> selected</p>
+
+<div class="paginator">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  {% endif %}
+  Page {{ page_obj.number }} of {{ paginator.num_pages }}
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const selectAll = document.getElementById("select-all");
+    const checkboxes = document.querySelectorAll('input[name="selected"]');
+    const countDisplay = document.getElementById("selected-count");
+
+    function updateCount() {
+        countDisplay.textContent = document.querySelectorAll('input[name="selected"]:checked').length;
+    }
+
+    selectAll.addEventListener("change", function() {
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        updateCount();
+    });
+
+    checkboxes.forEach(cb => cb.addEventListener("change", updateCount));
+});
+</script>
+
+{% endblock %}

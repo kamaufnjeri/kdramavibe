@@ -6,7 +6,7 @@ os.environ.setdefault(
 django.setup()
 from scrapy.crawler import CrawlerProcess
 from kdramavibe_scrapper.scrapper_spider.scrapper_spider.spiders import (
-    KactorDetailsSpider, KactorsSpider
+    KactorsSpider
 )
 from kdramavibe_scrapper.models import Kactor
 
