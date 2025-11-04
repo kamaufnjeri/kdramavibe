@@ -49,7 +49,7 @@ export default function AboutDetails() {
       {/* Data Source */}
      <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
   <h2 className="text-3xl font-bold mb-4">Data & Sources</h2>
-  <p className="text-base leading-relaxed text-gray-300">
+  <p className="text-base leading-relaxed ">
     All data has been researched, scraped, and curated by{" "}
     <Link
       href="http://florakamau.tech/"
@@ -87,7 +87,7 @@ export default function AboutDetails() {
       Dramabeans
     </Link>
     . I used{" "}
-    <strong className="text-white">
+    <strong >
       Next.js, Django, Scrapy, Python, and TypeScript
     </strong>{" "}
     to collect, process, and present the information efficiently. All
@@ -99,10 +99,10 @@ export default function AboutDetails() {
       <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
         <h2 className="text-3xl font-bold mb-4">Future Developments</h2>
         <ul className="space-y-2 text-base">
-          <li><FaStar className="inline text-accent mr-2"/>Ratings and reviews for K-Dramas and actors</li>
+          <li><FaStar className="inline text-accent mr-2"/>Reviews for K-dramas and K-actors</li>
           <li><FaStar className="inline text-accent mr-2"/>Enhanced search and filter options with multiple criteria</li>
-          <li><FaStar className="inline text-accent mr-2"/>User accounts to save favorite K-Dramas and actors</li>
-          <li><FaStar className="inline text-accent mr-2"/>Interactive timelines of actors’ careers and drama releases</li>
+          <li><FaStar className="inline text-accent mr-2"/>User accounts to save favorite K-Dramas and K-Actors</li>
+          <li><FaStar className="inline text-accent mr-2"/>Interactive timelines of K-actors’ careers and K-drama releases</li>
         </ul>
       </section>
 

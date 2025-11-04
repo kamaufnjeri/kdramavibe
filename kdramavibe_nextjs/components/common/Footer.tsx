@@ -58,7 +58,7 @@ const Footer = () => {
         <p className="text-primary">
           &copy; 2025 KDramaVibe. All rights reserved.
         </p>
-       <p className="text-sm text-gray-300 leading-relaxed">
+       <p className="text-sm  leading-relaxed">
   Data and text content on this site are sourced from{" "}
   <Link
     href="https://www.wikipedia.org/"
