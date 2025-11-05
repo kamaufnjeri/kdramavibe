@@ -18,8 +18,8 @@ from .serializers import (
     KactorDetailSerializer,
     KdramaDetailSerializer,
     KdramaMatchSerializer,
-    LinkKdramasSerializer,
-    UnlinkKdramasSerializer,
+    # LinkKdramasSerializer,
+    # UnlinkKdramasSerializer,
     KactorMatchSerializer,
 )
 from .models import Kdrama, Kactor, DramabeansKdrama, DramabeansKactor

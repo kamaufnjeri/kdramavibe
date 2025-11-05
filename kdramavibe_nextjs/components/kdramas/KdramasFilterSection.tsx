@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import GenresAutoComplete from './GenresAutoComplete'
 import YearsSelect from './YearsSelect'
 import { FaSync } from 'react-icons/fa'
@@ -20,7 +20,16 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
   const [filters, setFilters] = useState<KdramasFilter>(searchParams);
   // State to manage pills (active filters display)
   const [pillsFilters, setPillsFilters] = useState<KdramasFilter>(searchParams);
-  const router = useRouter();
+
+  useEffect(() => {
+    setFilters(searchParams);
+    setPillsFilters(searchParams);
+  }, [searchParams]);
+
+  const navigateWithReload = (path: string) => {
+    window.location.href = path;
+
+  };
 
   // Reset all filters to defaults
   const handleFormReset = () => {
@@ -38,7 +47,7 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
       ordering: '',
       page: '1'
     });
-    router.push('/'); // navigate to home with no filters
+    navigateWithReload('/'); // navigate to home with no filters
   }
 
   // Convert filters object to query string
@@ -56,13 +65,6 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
   const handleChange = (key: string, value: string) => {
     const updatedFilters = { ...filters, [key]: value };
     setFilters(updatedFilters);
-
-    // Update pills and router for certain filters immediately
-    if (['year', 'genre', 'ordering'].includes(key)) {
-      setPillsFilters(updatedFilters);
-      const query = getQuery(updatedFilters);
-      router.push(`/?${query}`);
-    }
   }
 
   // Handle Enter key submission for text inputs
@@ -78,7 +80,7 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
       setPillsFilters(updatedFilters);
 
       const query = getQuery(updatedFilters);
-      router.push(`/?${query}`);
+      navigateWithReload(`/?${query}`);
     }
   };
 
@@ -96,7 +98,7 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
       ...(updatedFilters?.page ? { page: updatedFilters?.page } : {}),
     }).toString();
 
-    router.push(`/?${query}`);
+    navigateWithReload(`/?${query}`);
   }
 
   // Reset a single filter field via pill click
@@ -113,7 +115,7 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
       ...(updatedFilters?.page ? { page: updatedFilters?.page } : {}),
     }).toString();
 
-    router.push(`/?${query}`);
+    navigateWithReload(`/?${query}`);
   };
 
   // Handle form submission (Apply button)
@@ -122,7 +124,7 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
     setPillsFilters(filters);
 
     const query = getQuery(filters);
-    router.push(`/?${query}`);
+    navigateWithReload(`/?${query}`);
   }
 
   return (

@@ -3,6 +3,7 @@ import KdramasFilterSection from "@/components/kdramas/KdramasFilterSection"; //
 import KdramasList from "@/components/kdramas/KdramasList"; // List display of Kdramas
 import { KdramasFilter } from "@/interfaces"; // Interface for filter props
 import getKdramas from "@/lib/getKdramas"; // Function to fetch Kdramas data
+import { notFound } from "next/navigation";
 import React from "react";
 
 interface PageProps {
@@ -17,6 +18,9 @@ export default async function Home({ searchParams }: PageProps) {
 
   // Fetch Kdramas from API or database based on filters
   const kdramasResponse = await getKdramas({ title, genre, year, ordering, page });
+  if (!kdramasResponse) {
+    notFound();
+  }
 
   return (
     <div>

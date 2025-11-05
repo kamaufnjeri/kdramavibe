@@ -9,10 +9,10 @@ from .views import (
     KactorListView,
     KdramaDetailView,
     KactorDetailView,
-    CompareKdramasView,
-    LinkKdramasView,
-    UnlinkKdramasView,
-    CompareKactorsView,
+    # CompareKdramasView,
+    # LinkKdramasView,
+    # UnlinkKdramasView,
+    # CompareKactorsView,
 )
 
 urlpatterns = [
@@ -39,26 +39,26 @@ urlpatterns = [
     ),
 
     # Compare and link/unlink Kdramas
-    path(
-        "api/kdramas/compare/",
-        CompareKdramasView.as_view(),
-        name="compare-kdramas",
-    ),
-    path(
-        "api/kdramas/link/",
-        LinkKdramasView.as_view(),
-        name="link-kdramas",
-    ),
-    path(
-        "api/kdramas/unlink/",
-        UnlinkKdramasView.as_view(),
-        name="unlink-kdramas",
-    ),
+    # path(
+    #     "api/kdramas/compare/",
+    #     CompareKdramasView.as_view(),
+    #     name="compare-kdramas",
+    # ),
+    # path(
+    #     "api/kdramas/link/",
+    #     LinkKdramasView.as_view(),
+    #     name="link-kdramas",
+    # ),
+    # path(
+    #     "api/kdramas/unlink/",
+    #     UnlinkKdramasView.as_view(),
+    #     name="unlink-kdramas",
+    # ),
 
-    # Compare Kactors
-    path(
-        "api/kactors/compare/",
-        CompareKactorsView.as_view(),
-        name="compare-kactors",
-    ),
+    # # Compare Kactors
+    # path(
+    #     "api/kactors/compare/",
+    #     CompareKactorsView.as_view(),
+    #     name="compare-kactors",
+    # ),
 ]

@@ -2,12 +2,13 @@
 import KdramaDetails from "@/components/kdramas/KdramaDetails";
 // Import function to fetch single Kdrama data
 import getSingleKdrama from "@/lib/getSingleKdrama";
+import { notFound } from "next/navigation";
 
 // Define props for the page
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string; // The slug identifier for the Kdrama
-  };
+  }>;
 }
 
 /**
@@ -18,10 +19,13 @@ interface PageProps {
  * @returns {Promise<JSX.Element>} The rendered page with Kdrama details.
  */
 export default async function SingleKdramaPage({ params }: PageProps) {
-  const { slug } = params; // Destructure slug from params
+  const { slug } = await params; // Destructure slug from params
 
   // Fetch the Kdrama data by slug
   const kdrama = await getSingleKdrama(slug);
+  if (!kdrama) {
+    notFound();
+  }
 
   return (
     <div className="flex justify-center m-4 p-4">

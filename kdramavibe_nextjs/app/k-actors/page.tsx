@@ -6,6 +6,7 @@ import KactorsList from "@/components/kactors/KactorsList";
 import { KactorsFilter } from "@/interfaces";
 // Import API function to fetch kactors
 import getKactors from "@/lib/getKactors";
+import { notFound } from "next/navigation";
 import React from "react";
 
 // Define props for the page
@@ -27,6 +28,10 @@ export default async function KActorsPage({ searchParams }: PageProps) {
 
   // Fetch Kactors data from backend/API
   const kactorsResponse = await getKactors({ name, age, gender, ordering, page });
+
+  if (!kactorsResponse) {
+    notFound();
+  }
 
   return (
     <div>

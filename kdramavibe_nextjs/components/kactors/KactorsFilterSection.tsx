@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaSync } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
 import { KactorsFilter } from '@/interfaces'
@@ -19,9 +19,19 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
   // Local state for filters in form inputs
   const [filters, setFilters] = useState<KactorsFilter>(searchParams)
   // State for pills display of active filters
-  const [pillsFilters, setPillsFilters] = useState<KactorsFilter>(searchParams)
+  const [pillsFilters, setPillsFilters] = useState<KactorsFilter>(searchParams);
   
-  const router = useRouter()
+  useEffect(() => {
+    setFilters(searchParams);
+    setPillsFilters(searchParams);
+  }, [searchParams]);
+
+
+  const navigateWithReload = (path: string) => {
+    window.location.href = path;
+  };
+
+
 
   // Reset all filters and redirect to base k-actors page
   const handleFormReset = () => {
@@ -39,7 +49,8 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
       ordering: '',
       page: '1'
     })
-    router.push('/k-actors')
+    
+    navigateWithReload('/k-actors')
   }
 
   // Convert filters object to URL query string
@@ -57,13 +68,6 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
   const handleChange = (key: string, value: string) => {
     const updatedFilters = { ...filters, [key]: value }
     setFilters(updatedFilters)
-
-    // Update pills and redirect if age, gender or ordering changes
-    if (['age', 'gender', 'ordering'].includes(key)) {
-      setPillsFilters(updatedFilters)
-      const query = getQuery(updatedFilters)
-      router.push(`/k-actors/?${query}`)
-    }
   }
 
   // Handle Enter key press in input fields
@@ -78,7 +82,7 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
       setPillsFilters(updatedFilters)
 
       const query = getQuery(updatedFilters)
-      router.push(`/k-actors/?${query}`)
+      navigateWithReload(`/k-actors/?${query}`)
     }
   }
 
@@ -94,7 +98,7 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
       ...(updatedFilters?.page ? { page: updatedFilters?.page } : {}),
     }).toString()
 
-    router.push(`/k-actors/?${query}`)
+    navigateWithReload(`/k-actors/?${query}`)
   }
 
   // Remove individual filter field (used by Pill component)
@@ -109,7 +113,7 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
       ...(updatedFilters?.ordering ? { ordering: updatedFilters.ordering } : {}),
       ...(updatedFilters?.page ? { page: updatedFilters?.page } : {}),
     }).toString()
-    router.push(`/k-actors/?${query}`)
+    navigateWithReload(`/k-actors/?${query}`)
   }
 
   // Handle form submission (Search button)
@@ -117,7 +121,7 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
     e.preventDefault()
     setPillsFilters(filters)
     const query = getQuery(filters)
-    router.push(`/k-actors/?${query}`)
+    navigateWithReload(`/k-actors/?${query}`)
   }
 
   return (
@@ -150,7 +154,12 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
 
         {/* Search & Reset Buttons */}
         <div className='flex flex-row justify-between gap-3 w-full lg:w-1/4 md:w-1/2 p-2'>
-          <button type='submit' className='cursor-pointer border-accent text-accent hover:text-white hover:bg-primary hover:border-primary rounded-xl px-4 py-2'>Search</button>
+        <button
+            type='submit'
+            className='cursor-pointer border-accent text-accent hover:text-white hover:bg-primary hover:border-primary rounded-xl px-4 py-2 border-2'
+          >
+            Apply
+          </button>          
           <button type='button' className='border-none cursor-pointer' onClick={handleFormReset}>
             <FaSync className='text-2xl font-bold text-accent hover:text-primary'/>
           </button>
