@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-!i0$c%a2)o@in3th3rwbdt4&z%hjgyad3#gp8#a6z&q*3j0d@o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "10.1.3.59"]
+ALLOWED_HOSTS = ["0.0.0.0", "kdramavibe.onrender.com"]
 
 
 # Application definition
