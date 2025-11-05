@@ -1,30 +1,43 @@
 import scrapy
-from ..items import KactorItem  # your Scrapy item
+from ..items import KactorItem  # Scrapy item for storing actor info
 import random
 import re
 from datetime import datetime
 from ..clean_data import cleaner
 
+# List of User-Agent strings for random rotation
 USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3) AppleWebKit/605.1.15 "
+    "(KHTML, like Gecko) Version/17.0 Safari/605.1.15",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1",
-    "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1",
-    "Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 "
+    "(KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 "
+    "(KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2_1) AppleWebKit/605.1.15 "
+    "(KHTML, like Gecko) Version/17.1 Safari/605.1.15",
     "Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/124.0",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 ]
+
+# AJAX headers for requests
 AJAX_HEADERS = {
-    "User-Agent": random.choice(USER_AGENTS),   # from your pool
+    "User-Agent": random.choice(USER_AGENTS),
     "Accept": "text/html, */*; q=0.01",
     "Accept-Language": "en-US,en;q=0.9",
     "X-Requested-With": "XMLHttpRequest",
-    "Referer": "https://dramabeans.com",        # often required
+    "Referer": "https://dramabeans.com",
     "Connection": "keep-alive",
 }
+
+# Alternate names for actor (stage, birth, etc.)
 ALT_NAME_FOR_NAMES = [
     "Also known as",
     "Alt name",
@@ -32,10 +45,19 @@ ALT_NAME_FOR_NAMES = [
     "Birth name",
 ]
 
+
 class WikipediaKactorsSpider(scrapy.Spider):
+    """
+    Scrapy spider to scrape detailed information about South Korean actors
+    and actresses from Wikipedia.
+    """
+
     name = "wiki_kactors"
     allowed_domains = ["en.wikipedia.org"]
-    start_urls = ["https://en.wikipedia.org/wiki/List_of_South_Korean_male_actors", "https://en.wikipedia.org/wiki/List_of_South_Korean_actresses"]
+    start_urls = [
+        "https://en.wikipedia.org/wiki/List_of_South_Korean_male_actors",
+        "https://en.wikipedia.org/wiki/List_of_South_Korean_actresses"
+    ]
 
     custom_settings = {
         "ITEM_PIPELINES": {
@@ -44,16 +66,14 @@ class WikipediaKactorsSpider(scrapy.Spider):
     }
 
     def start_requests(self):
+        """Start requests for male and female actors."""
         for url in self.start_urls:
-            if 'actresses' in url:
-                gender = 'female'
-            else:
-                gender = 'male'
-
+            gender = "female" if "actresses" in url else "male"
             headers = {
                 "User-Agent": random.choice(USER_AGENTS),
                 "Accept-Language": "en-US,en;q=0.9",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,"
+                          "image/webp,*/*;q=0.8",
             }
             yield scrapy.Request(
                 url=url,
@@ -62,123 +82,136 @@ class WikipediaKactorsSpider(scrapy.Spider):
                 meta={"gender": gender}
             )
 
-
     def parse(self, response):
-        # Get links to all drama pages
+        """
+        Parse actor/actress list page to get links to individual Wikipedia pages.
+        """
         for actor in response.css("div#mw-content-text div.div-col ul li a"):
-            full_url = response.urljoin(actor.attrib['href'])
+            full_url = response.urljoin(actor.attrib["href"])
             item = KactorItem()
-            item['gender'] = response.meta['gender']
-            item['wikipedia_url'] = full_url
+            item["gender"] = response.meta["gender"]
+            item["wikipedia_url"] = full_url
 
-            yield scrapy.Request(url=full_url, callback=self.parse_kdrama,
-                headers=AJAX_HEADERS, meta={"item": item})
+            yield scrapy.Request(
+                url=full_url,
+                callback=self.parse_kdrama,
+                headers=AJAX_HEADERS,
+                meta={"item": item}
+            )
 
-        
     def parse_kdrama(self, response):
-        item = response.meta['item']
-        item['name'] = response.css("h1#firstHeading span.mw-page-title-main::text").get()
-        item['description'] = self.get_description(response)
+        """
+        Parse individual actor/actress Wikipedia page.
+        Extract name, description, infobox data, birthday, age, etc.
+        """
+        item = response.meta["item"]
+        item["name"] = response.css("h1#firstHeading span.mw-page-title-main::text").get()
+        item["description"] = self.get_description(response)
 
+        # Select infobox if available
         infobox_sel = response.css(
             "table.infobox.biography, table.infobox.vcard, table.infobox.plainlist"
         )
+        infobox = infobox_sel[0] if infobox_sel else None
 
-        infobox = infobox_sel[0] if infobox_sel else None 
-
-        if infobox: 
+        if infobox:
+            # Alternate names from infobox
             alt_name_selectors = ", ".join([
                 f"th:contains('{field}') + td::text, th:contains('{field}') + td *:not(style):not(span)::text"
                 for field in ALT_NAME_FOR_NAMES
             ])
-            birthname_div = birthplace_div = infobox.css("th:contains('Born') + td div.nickname") 
-            birthname_text = (birthname_div.xpath('string()').get() or '').strip()
-                
+            birthname_div = infobox.css("th:contains('Born') + td div.nickname")
+            birthname_text = (birthname_div.xpath("string()").get() or "").strip()
+
             alt_names = infobox.css(alt_name_selectors).getall()
             if birthname_text:
                 alt_names.append(birthname_text)
+            item["alternate_names"] = alt_names
 
-            item['alternate_names'] = alt_names
-
+            # Birthplace extraction
             birthplace_div = infobox.css("th:contains('Born') + td div.birthplace")
-            birthplace_text = (birthplace_div.xpath('string()').get() or '').strip()
-
+            birthplace_text = (birthplace_div.xpath("string()").get() or "").strip()
             if not birthplace_text:
                 birthplace_td = infobox.css("th:contains('Origin') + td")
-                birthplace_text = (birthplace_td.xpath('string()').get() or '').strip()
-            item['birthplace'] = birthplace_text if birthplace_text else None
+                birthplace_text = (birthplace_td.xpath("string()").get() or "").strip()
+            item["birthplace"] = birthplace_text if birthplace_text else None
 
-            # --- Birthday & Age ---
+            # Birthday and age
             birthday_str = infobox.css("th:contains('Born') + td span.bday::text").get()
             if birthday_str:
-                birthday_date = datetime.strptime(birthday_str, '%Y-%m-%d').date()
+                birthday_date = datetime.strptime(birthday_str, "%Y-%m-%d").date()
                 today = datetime.today().date()
                 age = today.year - birthday_date.year - ((today.month, today.day) < (birthday_date.month, birthday_date.day))
             else:
                 birthday_date = None
                 age = None
+            item["birthday"] = birthday_date
+            item["age"] = age
 
-            item['birthday'] = birthday_date
-            item['age'] = age
-
+            # Years active
             years_active = infobox.xpath(
                 'string(.//tr[th[contains(normalize-space(translate(., "\u00A0", " ")), "Years active")]]/td)'
             ).get()
-            item['years_active'] = years_active.strip() if years_active else None
+            item["years_active"] = years_active.strip() if years_active else None
 
+            # Occupation, agents, height
+            item["occupations"] = infobox.css(
+                "th:contains('Occupation') + td::text, th:contains('Occupation') + td *:not(style)::text"
+            ).getall()
+            item["agents"] = infobox.css(
+                "th:contains('Agent') + td::text, th:contains('Agent') + td *:not(style)::text"
+            ).getall()
+            item["height"] = infobox.css(
+                "th:contains('Height') + td::text, th:contains('Height') + td *:not(style)::text"
+            ).get()
 
-            item['occupations'] = infobox.css("th:contains('Occupation') + td::text, th:contains('Occupation') +  td *:not(style)::text").getall()
-            item['agents'] = infobox.css("th:contains('Agent') + td::text, th:contains('Agent') + td *:not(style)::text").getall()
-            
-            item['height'] = infobox.css("th:contains('Height') + td::text, th:contains('Height') +  td *:not(style)::text").get()
+            # Partner/Spouse and Children
+            item["partner_or_spouse"] = self.get_partner_or_spouse(infobox)
+            item["children"] = self.get_children(infobox)
 
-            item['partner_or_spouse'] = self.get_partner_or_spouse(infobox) 
-            item['children'] = self.get_children(infobox)       
-            item['image_url'] = f'https:{infobox.css("td.infobox-image a img.mw-file-element::attr(src)").get()}'
+            # Image
+            item["image_url"] = f"https:{infobox.css('td.infobox-image a img.mw-file-element::attr(src)').get()}"
 
         yield item
-    
 
-   
     def get_description(self, response):
+        """
+        Extract a cleaned biography/description from the actor's Wikipedia page.
+        """
         biography_text = []
 
-        # Try to locate infobox biography
+        # Start after infobox if available
         infobox_sel = response.css(
             "table.infobox.biography, table.infobox.vcard, table.infobox.plainlist"
         )
-
         infobox = infobox_sel[0] if infobox_sel else None
-        if infobox:
-            # Start after infobox until next section
-            elements = infobox.xpath('following-sibling::*')
-        else:
-            # Fallback: start from content area if no infobox
-            elements = response.xpath('//div[@id="mw-content-text"]/*')
+        elements = infobox.xpath("following-sibling::*") if infobox else response.xpath("//div[@id='mw-content-text']/*")
 
         for sibling in elements:
-            # Stop at next major section heading
+            # Stop at next major section
             if sibling.xpath('self::div[contains(@class,"mw-heading2")] | self::h2'):
                 break
 
-            # Only capture paragraphs and maybe short lists
-            if sibling.root.tag == 'p':
-                text = sibling.xpath('string()').get()
+            # Capture paragraphs and lists
+            if sibling.root.tag == "p":
+                text = sibling.xpath("string()").get()
                 if text and text.strip():
                     biography_text.append(text.strip())
-
-            elif sibling.root.tag in ['ul', 'ol']:
-                for li in sibling.xpath('.//li'):
-                    li_text = li.xpath('string()').get()
+            elif sibling.root.tag in ["ul", "ol"]:
+                for li in sibling.xpath(".//li"):
+                    li_text = li.xpath("string()").get()
                     if li_text and li_text.strip():
                         biography_text.append(li_text.strip())
 
         # Join and clean text
         full_text = " ".join(biography_text)
-        full_text = re.sub(r'\[\d+\]', '', full_text)  # remove citation markers like [1]
+        full_text = re.sub(r"\[\d+\]", "", full_text)  # remove citation markers like [1]
         return full_text.strip() if full_text else None
 
     def get_partner_or_spouse(self, infobox):
+        """
+        Extract partner or spouse information from infobox.
+        """
         partner_texts = infobox.css(
             "th:contains('Spouse') + td::text, "
             "th:contains('Spouse') + td *:not(style)::text, "
@@ -186,54 +219,49 @@ class WikipediaKactorsSpider(scrapy.Spider):
             "th:contains('Partner') + td *:not(style)::text"
         ).getall()
 
-        # --- Clean and normalize ---
         cleaned = []
         for p in partner_texts:
             text = p.strip()
             if not text:
                 continue
             text = re.sub(r"[\u200b\u200c\u200d\uFEFF]", "", text)
-            # Remove stray commas and semicolons around parentheses
             text = re.sub(r"\s*,\s*(?=[);])", "", text)
-            # Normalize multiple commas/spaces
             text = re.sub(r",\s*,+", ", ", text)
             text = re.sub(r"\s{2,}", " ", text)
             cleaned.append(text)
 
-        # Join and strip dangling punctuation
         partner_str = " ".join(cleaned)
         partner_str = re.sub(r"\s*([,;])\s*", r"\1 ", partner_str)
-        partner_str = partner_str.strip(" ,;")
+        return partner_str.strip(" ,;") if partner_str else None
 
-        return partner_str if partner_str else None
-    
     def get_children(self, infobox):
+        """
+        Extract children info from infobox.
+        Returns either a list of names/number or empty list.
+        """
         children_raw = infobox.xpath('string(.//tr[th[contains(text(), "Children")]]/td)').get()
         children_raw = children_raw.strip() if children_raw else ""
 
-        if children_raw:
-            # Remove zero-width characters and clean spaces
-            children_raw = re.sub(r"[\u200b\u200c\u200d\uFEFF]", "", children_raw)
-            children_raw = re.sub(r"\s+", " ", children_raw)
-
-            children_list = []
-
-            # Detect if there’s a number (e.g., "2", "3 children")
-            num_match = re.search(r'\b(\d+)\b', children_raw)
-            if num_match:
-                children_list.append(int(num_match.group(1)))
-
-            # Extract possible names (proper nouns)
-            name_matches = re.findall(r"\b[A-Z][a-z]+(?:\s[A-Z][a-z]+)*\b", children_raw)
-
-            # Filter out common non-name words
-            blacklist = {"Child", "Children", "Including"}
-            names = [n for n in name_matches if n not in blacklist]
-
-            if names:
-                children_list.extend(names)
-
-            # Store either structured list or fallback text
-            return children_list if children_list else [children_raw]
-        else:
+        if not children_raw:
             return []
+
+        # Clean text
+        children_raw = re.sub(r"[\u200b\u200c\u200d\uFEFF]", "", children_raw)
+        children_raw = re.sub(r"\s+", " ", children_raw)
+
+        children_list = []
+
+        # Extract number of children
+        num_match = re.search(r"\b(\d+)\b", children_raw)
+        if num_match:
+            children_list.append(int(num_match.group(1)))
+
+        # Extract possible names
+        name_matches = re.findall(r"\b[A-Z][a-z]+(?:\s[A-Z][a-z]+)*\b", children_raw)
+        blacklist = {"Child", "Children", "Including"}
+        names = [n for n in name_matches if n not in blacklist]
+
+        if names:
+            children_list.extend(names)
+
+        return children_list if children_list else [children_raw]

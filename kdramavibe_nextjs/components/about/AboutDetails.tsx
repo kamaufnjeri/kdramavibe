@@ -1,18 +1,19 @@
-"use client";
+"use client"; // Enables client-side interactivity
+
 import React from "react";
 import Link from "next/link";
-import Banner from "../common/Banner";
-import { FaStar, FaEnvelope, FaGlobe, FaUser, FaFilter } from "react-icons/fa";
+import Banner from "../common/Banner"; // Top page banner
+import { FaStar, FaEnvelope, FaGlobe, FaUser, FaFilter } from "react-icons/fa"; // Icons for features and contact sections
 
+// AboutDetails component displays information about KdramaVibe, features, data sources, future developments, and contact
 export default function AboutDetails() {
   return (
     <div className="flex flex-col gap-10 p-6 lg:px-24 lg:py-12 bg-background text-text">
 
       {/* Banner Header */}
       <Banner />
-      
 
-      {/* Introduction */}
+      {/* Introduction Section */}
       <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
         <h2 className="text-3xl font-bold mb-4">About KdramaVibe</h2>
         <p className="text-base leading-relaxed">
@@ -22,8 +23,10 @@ export default function AboutDetails() {
         </p>
       </section>
 
-      {/* Features with Flex Row on Large Screens */}
+      {/* Features Section */}
       <section className="rounded-2xl bg-background/80 p-6 shadow-lg flex flex-col lg:flex-row gap-6">
+
+        {/* Kactors Features */}
         <div className="flex-1">
           <h2 className="text-3xl font-bold mb-4 flex items-center gap-2">
             <FaUser /> Kactors
@@ -34,6 +37,7 @@ export default function AboutDetails() {
           </ul>
         </div>
 
+        {/* K-Dramas Features */}
         <div className="flex-1">
           <h2 className="text-3xl font-bold mb-4 flex items-center gap-2">
             <FaFilter /> K-Dramas
@@ -46,56 +50,51 @@ export default function AboutDetails() {
         </div>
       </section>
 
-      {/* Data Source */}
-     <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
-  <h2 className="text-3xl font-bold mb-4">Data & Sources</h2>
-  <p className="text-base leading-relaxed ">
-    All data has been researched, scraped, and curated by{" "}
-    <Link
-      href="http://florakamau.tech/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-accent font-semibold hover:underline"
-    >
-      me
-    </Link>{" "}
-    from{" "}
-    <Link
-      href="https://www.wikipedia.org/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-accent hover:underline"
-    >
-      Wikipedia
-    </Link>{" "}
-    (available under the{" "}
-    <Link
-      href="https://creativecommons.org/licenses/by-sa/3.0/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-accent hover:underline"
-    >
-      Creative Commons Attribution-ShareAlike License
-    </Link>
-    ) and{" "}
-    <Link
-      href="https://dramabeans.com/"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-accent hover:underline"
-    >
-      Dramabeans
-    </Link>
-    . I used{" "}
-    <strong >
-      Next.js, Django, Scrapy, Python, and TypeScript
-    </strong>{" "}
-    to collect, process, and present the information efficiently. All
-    trademarks, logos, and images belong to their respective owners.
-  </p>
-</section>
+      {/* Data & Sources Section */}
+      <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
+        <h2 className="text-3xl font-bold mb-4">Data & Sources</h2>
+        <p className="text-base leading-relaxed">
+          All data has been researched, scraped, and curated by{" "}
+          <Link
+            href="http://florakamau.tech/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent font-semibold hover:underline"
+          >
+            me
+          </Link>{" "}
+          from{" "}
+          <Link
+            href="https://www.wikipedia.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+          >
+            Wikipedia
+          </Link>{" "}
+          (available under the{" "}
+          <Link
+            href="https://creativecommons.org/licenses/by-sa/3.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+          >
+            Creative Commons Attribution-ShareAlike License
+          </Link>
+          ) and{" "}
+          <Link
+            href="https://dramabeans.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+          >
+            Dramabeans
+          </Link>.
+          I used <strong>Next.js, Django, Scrapy, Python, and TypeScript</strong> to collect, process, and present the information efficiently. All trademarks, logos, and images belong to their respective owners.
+        </p>
+      </section>
 
-      {/* Future Developments */}
+      {/* Future Developments Section */}
       <section className="rounded-2xl bg-background/80 p-6 shadow-lg">
         <h2 className="text-3xl font-bold mb-4">Future Developments</h2>
         <ul className="space-y-2 text-base">
@@ -106,22 +105,40 @@ export default function AboutDetails() {
         </ul>
       </section>
 
-      {/* Contact & Portfolio */}
+      {/* Contact & Portfolio Section */}
       <section className="rounded-2xl bg-background/80 p-6 shadow-lg flex flex-col lg:flex-row gap-6">
+
+        {/* Contact Info */}
         <div className="flex-1">
-          <h2 className="text-3xl font-bold mb-4 flex items-center gap-2"><FaEnvelope /> Contact Me</h2>
+          <h2 className="text-3xl font-bold mb-4 flex items-center gap-2">
+            <FaEnvelope /> Contact Me
+          </h2>
           <p className="text-base leading-relaxed">
-            Have questions or suggestions? Reach out via: {" "}
-            <Link href="https://florakamau.tech/#contact" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+            Have questions or suggestions? Reach out via:{" "}
+            <Link
+              href="https://florakamau.tech/#contact"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline"
+            >
               Contact Me
             </Link>.
           </p>
         </div>
+
+        {/* Portfolio Info */}
         <div className="flex-1">
-          <h2 className="text-3xl font-bold mb-4 flex items-center gap-2"><FaGlobe /> Portfolio</h2>
+          <h2 className="text-3xl font-bold mb-4 flex items-center gap-2">
+            <FaGlobe /> Portfolio
+          </h2>
           <p className="text-base leading-relaxed">
-            Explore my other projects and works on my portfolio: {" "}
-            <Link href="https://florakamau.tech/" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+            Explore my other projects and works on my portfolio:{" "}
+            <Link
+              href="https://florakamau.tech/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent hover:underline"
+            >
               Visit Portfolio
             </Link>.
           </p>

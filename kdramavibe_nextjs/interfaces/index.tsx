@@ -1,61 +1,72 @@
+// =====================
+// 🔹 Filter Interfaces
+// =====================
 export interface KdramasFilter {
-    title: string;
-    genre: string;
-    year: string;
-    ordering: string;
-    page: string;
+  title: string;
+  genre: string;
+  year: string;
+  ordering: string;
+  page: string;
+}
 
-  }
+export interface KactorsFilter {
+  name: string;
+  age: string;
+  gender: string;
+  ordering: string;
+  page: string;
+}
 
-  export interface KactorsFilter {
-    name: string;
-    age: string;
-    gender: string;
-    ordering: string;
-    page: string;
-  }
-
+// =====================
+// 🔹 Basic Entities
+// =====================
 export interface Kdrama {
-    slug: string;
-    title: string;
-    rating: string | null;
-    no_of_votes: string | null;
-    start_year: string | null;
-    end_year: string | null;
-    genres: string[];
-    image_url: string | null; 
+  slug: string;
+  title: string;
+  rating: string | null;
+  no_of_votes: string | null;
+  start_year: string | null;
+  end_year: string | null;
+  genres: string[];
+  image_url: string | null;
 }
 
 export interface Kactor {
-    slug: string;
-    name: string;
-    age: string | null;
-    gender: "female" | "male" | null;
-    image_url: string | null; 
-    no_of_votes: string | null;
-    dramabeans_image_url: string | null;
+  slug: string;
+  name: string;
+  age: string | null;
+  gender: "female" | "male" | null;
+  image_url: string | null;
+  no_of_votes: string | null;
+  dramabeans_image_url: string | null;
 }
 
- export interface KdramasResponse {
-    total_count: number;
-    total_pages: number;
-    current_page: number;
-    page_size: number;
-    next: string | null;
-    previous: string | null;
-    results: Kdrama[];
-  }
+// =====================
+// 🔹 Paginated Responses
+// =====================
+export interface KdramasResponse {
+  total_count: number;
+  total_pages: number;
+  current_page: number;
+  page_size: number;
+  next: string | null;
+  previous: string | null;
+  results: Kdrama[];
+}
 
-   export interface KactorsResponse {
-    total_count: number;
-    total_pages: number;
-    current_page: number;
-    page_size: number;
-    next: string | null;
-    previous: string | null;
-    results: Kactor[];
-  }
+export interface KactorsResponse {
+  total_count: number;
+  total_pages: number;
+  current_page: number;
+  page_size: number;
+  next: string | null;
+  previous: string | null;
+  results: Kactor[];
+}
 
+// =====================
+// 🔹 Casts
+// =====================
 export interface KdramaCasts {
   role_name: string | null;
   kactor_name: string;
@@ -64,9 +75,12 @@ export interface KdramaCasts {
   kactor_gender: "female" | "male";
 }
 
+// =====================
+// 🔹 Detailed Kdrama
+// =====================
 export interface KdramaDetail {
-  title: string; // required
-  slug: string;  // required
+  title: string;
+  slug: string;
   start_year?: string | null;
   end_year?: string | null;
   rating?: string | null;
@@ -85,11 +99,12 @@ export interface KdramaDetail {
   networks?: string[] | null;
   alternate_titles?: string[] | null;
   genres?: string[] | null;
-
   kactors?: KdramaCasts[] | null;
 }
 
-
+// =====================
+// 🔹 Kactor Dramas
+// =====================
 export interface KactorDramas {
   kdrama_title: string;
   kdrama_slug: string;
@@ -97,6 +112,9 @@ export interface KactorDramas {
   year?: string | null;
 }
 
+// =====================
+// 🔹 Detailed Kactor
+// =====================
 export interface KactorDetail {
   name: string;
   alternate_names?: string[];
@@ -115,7 +133,6 @@ export interface KactorDetail {
   no_of_votes: string | null;
   dramabeans_image_url: string | null;
   dramabeans_url: string | null;
-
   image_url?: string;
   slug: string;
   kdramas?: KactorDramas[];

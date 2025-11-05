@@ -1,14 +1,17 @@
 {% extends "admin/base_site.html" %}
+
 {% block content %}
 <h1>Kdrama Comparison Results</h1>
 
+<!-- Form to link selected Kdramas -->
 <form method="post" action="{% url 'admin:link-kdramas' %}">
     {% csrf_token %}
+    
+    <!-- Table showing comparison results -->
     <table class="adminlist" border="1" cellpadding="6" cellspacing="0">
         <tr>
-             <th>
-                  <input type="checkbox" id="select-all">
-              </th>
+            <!-- Select all checkbox -->
+            <th><input type="checkbox" id="select-all"></th>
             <th>Dramabeans Title</th>
             <th>Wiki Title</th>
             <th>Alternate Titles</th>
@@ -19,31 +22,50 @@
             <th>Is Match</th>
         </tr>
 
+        <!-- Loop through Kdrama matches -->
         {% for result in matches %}
         <tr>
-            <td><input type="checkbox" name="selected" value="{{ result.dramabeans_id }}__{{ result.wiki_id }}"></td>
+            <!-- Checkbox for each match -->
+            <td>
+                <input type="checkbox" name="selected" value="{{ result.dramabeans_id }}__{{ result.wiki_id }}">
+            </td>
+
+            <!-- Data columns -->
             <td>{{ result.dramabeans_title }}</td>
             <td>{{ result.wiki_title }}</td>
+
+            <!-- Alternate titles -->
             <td>
                 {% for alt in result.alternate_titles %}
                     <span>{{ alt }}</span>{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </td>
+
+            <!-- Year columns -->
             <td>{{ result.dramabeans_year }}</td>
             <td>{{ result.start_year }}{% if result.end_year %}–{{ result.end_year }}{% endif %}</td>
+
+            <!-- Score and match indicators -->
             <td>{{ result.best_score|floatformat:2 }}%</td>
             <td>{% if result.years_match %}✅{% else %}❌{% endif %}</td>
             <td>{% if result.is_match %}✅{% else %}❌{% endif %}</td>
         </tr>
+
         {% empty %}
-        <tr><td colspan="9">No matches found.</td></tr>
+        <tr>
+            <td colspan="9">No matches found.</td>
+        </tr>
         {% endfor %}
     </table>
 
+    <!-- Submit button -->
     <button type="submit" class="button">Link Selected</button>
-
 </form>
+
+<!-- Display count of selected items -->
 <p><span id="selected-count">0</span> selected</p>
+
+<!-- Pagination controls -->
 <div class="paginator">
   {% if page_obj.has_previous %}
     <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
@@ -53,21 +75,26 @@
     <a href="?page={{ page_obj.next_page_number }}">Next</a>
   {% endif %}
 </div>
+
+<!-- JS for select all checkbox and count update -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const selectAll = document.getElementById("select-all");
     const checkboxes = document.querySelectorAll('input[name="selected"]');
     const countDisplay = document.getElementById("selected-count");
 
+    // Update selected count
     function updateCount() {
         countDisplay.textContent = document.querySelectorAll('input[name="selected"]:checked').length;
     }
 
+    // Handle select all toggle
     selectAll.addEventListener("change", function() {
         checkboxes.forEach(cb => cb.checked = selectAll.checked);
         updateCount();
     });
 
+    // Handle individual checkbox toggle
     checkboxes.forEach(cb => cb.addEventListener("change", updateCount));
 });
 </script>

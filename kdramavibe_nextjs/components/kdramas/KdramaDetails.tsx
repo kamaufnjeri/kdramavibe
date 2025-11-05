@@ -7,37 +7,39 @@ import KdramaCastsDetails from './KdramaCastsDetails'
 import { FaEye, FaStar } from 'react-icons/fa'
 
 interface KdramaDetailsProps {
-  kdrama: KdramaDetail
+  kdrama: KdramaDetail; // object containing all kdrama details
 }
 
 const KdramaDetails: React.FC<KdramaDetailsProps> = ({ kdrama }) => {
   return (
     <div className="flex flex-col gap-6 items-center justify-center w-full">
+      {/* Main Kdrama Card */}
       <div className="rounded-2xl border border-border bg-background/60 shadow-sm 
                       text-text p-6 lg:w-3/4 w-full flex flex-col gap-6">
-           {((kdrama.rating || kdrama.no_of_votes) && kdrama.dramabeans_url) && (
+
+        {/* Rating & Votes */}
+        {((kdrama.rating || kdrama.no_of_votes) && kdrama.dramabeans_url) && (
           <div className="flex flex-wrap justify-between gap-1 items-center border border-accent/30 rounded-xl px-3 py-2 mt-2">
             <p className="text-sm text-purple-300 italic font-semibold tracking-wide">
-  By{" "}
-  <Link
-    href={kdrama?.dramabeans_url}
-    target="_blank"
-    rel="noreferrer noopener"
-    className="text-accent not-italic hover:underline hover:text-pink-600 transition-colors duration-200"
-  >
-    Dramabeans
-  </Link>
-</p>
+              By{" "}
+              <Link
+                href={kdrama?.dramabeans_url}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-accent not-italic hover:underline hover:text-pink-600 transition-colors duration-200"
+              >
+                Dramabeans
+              </Link>
+            </p>
 
-        
             <div className="flex items-center gap-4">
               {kdrama.rating && (
                 <span className="inline-flex items-center gap-1 text-yellow-400 font-semibold text-sm">
-                  <FaStar className="text-yellow-400 " size={14} />
+                  <FaStar className="text-yellow-400" size={14} />
                   <span>{kdrama.rating}</span>
                 </span>
               )}
-        
+
               {kdrama.no_of_votes && (
                 <span className="inline-flex items-center gap-1 text-sm font-medium">
                   <FaEye className="text-gray-400" size={14} />
@@ -47,41 +49,38 @@ const KdramaDetails: React.FC<KdramaDetailsProps> = ({ kdrama }) => {
             </div>
           </div>
         )}
-        
-                
-        {/* 🏷️ Title + Years */}
+
+        {/* Title + Years */}
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h1 className="font-extrabold text-3xl text-primary">{kdrama.title}</h1>
           {kdrama.start_year && (
             <div className="text-right font-semibold text-lg text-accent">
               {kdrama.start_year}
-              {kdrama.end_year && kdrama.end_year !== kdrama.start_year && (
-                <> – {kdrama.end_year}</>
-              )}
+              {kdrama.end_year && kdrama.end_year !== kdrama.start_year && <> – {kdrama.end_year}</>}
             </div>
           )}
         </div>
 
-        {/* 📺 Image + Info */}
+        {/* Image + Info Section */}
         <div className="flex flex-col lg:flex-row gap-6">
+          {/* Main Image */}
           <ImageWithFallback
             alt={kdrama.title}
             imageSrc={kdrama.image_url}
             className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
           />
 
+          {/* Info Fields */}
           <div className="flex flex-col gap-5 flex-1">
-            
-            {/* 🧾 Plot / Description */}
+            {/* Plot / Description */}
             {kdrama.plot && (
               <div className="text-base leading-relaxed overflow-y-auto custom-scrollbar max-h-96">
                 <p className="whitespace-pre-line">{kdrama.plot}</p>
               </div>
             )}
 
-            {/* 🎭 Info Fields */}
+            {/* Info Rows */}
             <div className="flex flex-col gap-2 text-sm sm:text-base">
-              
               {/* Genres */}
               {Array.isArray(kdrama.genres) && kdrama.genres.length > 0 && (
                 <div className="flex flex-wrap gap-1">
@@ -149,7 +148,7 @@ const KdramaDetails: React.FC<KdramaDetailsProps> = ({ kdrama }) => {
               )}
             </div>
 
-            {/* 🔗 Source + Link */}
+            {/* Source + Link */}
             <div className="flex items-center justify-between flex-wrap gap-3 pt-3 border-t border-border mt-2">
               {kdrama.wikipedia_url && (
                 <Link
@@ -177,7 +176,9 @@ const KdramaDetails: React.FC<KdramaDetailsProps> = ({ kdrama }) => {
           </div>
         </div>
       </div>
-     {kdrama.kactors && <KdramaCastsDetails kactors={kdrama.kactors}/>}
+
+      {/* Cast Details */}
+      {kdrama.kactors && <KdramaCastsDetails kactors={kdrama.kactors} />}
     </div>
   )
 }
@@ -185,6 +186,7 @@ const KdramaDetails: React.FC<KdramaDetailsProps> = ({ kdrama }) => {
 export default KdramaDetails
 
 /* Helper Components */
+// Display single label + value field
 const InfoField = ({ label, value }: { label: string; value: string | number }) => (
   <div className="flex flex-wrap gap-1">
     <h3 className="font-bold">{label}:</h3>
@@ -192,6 +194,7 @@ const InfoField = ({ label, value }: { label: string; value: string | number }) 
   </div>
 )
 
+// Display label + list of items
 const InfoRow = ({ title, items }: { title: string; items: string[] }) => (
   <div className="flex flex-wrap gap-1">
     <h3 className="font-bold">{title}:</h3>

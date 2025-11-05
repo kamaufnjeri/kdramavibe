@@ -1,11 +1,16 @@
 {% extends "admin/base_site.html" %}
+
 {% block content %}
 <h1>Kdrama Comparison Results</h1>
 
+<!-- Form to link selected Kactors -->
 <form method="post" action="{% url 'admin:link-kactors' %}">
     {% csrf_token %}
+    
+    <!-- Table showing comparison results -->
     <table class="adminlist" border="1" cellpadding="6" cellspacing="0">
         <tr>
+            <!-- Select all checkbox -->
             <th><input type="checkbox" id="select-all"></th>
             <th>Dramabeans Name</th>
             <th>Wiki Name</th>
@@ -19,19 +24,28 @@
             <th>Is Match</th>
         </tr>
 
+        <!-- Loop through matches -->
         {% for result in matches %}
         <tr>
-            <td><input type="checkbox" name="selected" value="{{ result.dramabeans_id }}__{{ result.wiki_id }}"></td>
+            <!-- Checkbox for each match -->
+            <td>
+                <input type="checkbox" name="selected" value="{{ result.dramabeans_id }}__{{ result.wiki_id }}">
+            </td>
+
+            <!-- Data columns -->
             <td>{{ result.dramabeans_name }}</td>
             <td>{{ result.wiki_name }}</td>
             <td>{{ result.wiki_birthday }}</td>
             <td>{{ result.dramabeans_birthday }}</td>
 
+            <!-- Alternate names -->
             <td>
                 {% for alt in result.alternate_names %}
                     <span>{{ alt }}</span>{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </td>
+
+            <!-- Wikipedia Image -->
             <td>
                 {% if result.wiki_image_url %}
                     <img src="{{ result.wiki_image_url }}" alt="{{ result.wiki_name }}" style="max-height: 100px;">
@@ -39,6 +53,8 @@
                     ❌
                 {% endif %}
             </td>
+
+            <!-- Dramabeans Image -->
             <td>
                 {% if result.dramabeans_image_url %}
                     <img src="{{ result.dramabeans_image_url }}" alt="{{ result.dramabeans_name }}" style="max-height: 100px;">
@@ -46,21 +62,27 @@
                     ❌
                 {% endif %}
             </td>
+
+            <!-- Score and matches -->
             <td>{{ result.best_score|floatformat:2 }}%</td>
             <td>{% if result.birthday_match %}✅{% else %}❌{% endif %}</td>
-
             <td>{% if result.is_match %}✅{% else %}❌{% endif %}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="11">No matches found.</td></tr>
+        <tr>
+            <td colspan="11">No matches found.</td>
+        </tr>
         {% endfor %}
     </table>
 
+    <!-- Submit button -->
     <button type="submit" class="button">Link Selected</button>
 </form>
 
+<!-- Display count of selected items -->
 <p><span id="selected-count">0</span> selected</p>
 
+<!-- Pagination controls -->
 <div class="paginator">
   {% if page_obj.has_previous %}
     <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
@@ -71,21 +93,25 @@
   {% endif %}
 </div>
 
+<!-- JS for select all and count update -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const selectAll = document.getElementById("select-all");
     const checkboxes = document.querySelectorAll('input[name="selected"]');
     const countDisplay = document.getElementById("selected-count");
 
+    // Update selected count
     function updateCount() {
         countDisplay.textContent = document.querySelectorAll('input[name="selected"]:checked').length;
     }
 
+    // Handle select all toggle
     selectAll.addEventListener("change", function() {
         checkboxes.forEach(cb => cb.checked = selectAll.checked);
         updateCount();
     });
 
+    // Handle individual checkbox toggle
     checkboxes.forEach(cb => cb.addEventListener("change", updateCount));
 });
 </script>
