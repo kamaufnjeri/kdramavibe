@@ -22,9 +22,9 @@ const GendersSelect: React.FC<GendersSelectProps> = ({ selectedGender, handleCha
         className="
           w-full rounded-xl px-4 py-2
           border-2 border-accent 
-          text-pink-200 
-          bg-[#1a001f]
-          placeholder:text-pink-400
+          text-input-text
+          bg-input-bg
+          placeholder:text-pink-500
           focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary
           hover:border-primary transition-colors duration-200
         "
@@ -35,11 +35,11 @@ const GendersSelect: React.FC<GendersSelectProps> = ({ selectedGender, handleCha
 
       {/* Dropdown list of gender options */}
       {showDropdown && GENDER_OPTIONS && (
-        <ul className='absolute hover:ring-1 hover:ring-primary hover:outline-none hover:border-primary bg-[#1a001f] mt-2 border-2 border-accent rounded-xl px-4 py-2 z-10 w-full max-h-50 overflow-y-auto custom-scrollbar'>
+        <ul className='absolute hover:ring-1 hover:ring-primary hover:outline-none hover:border-primary bg-input-bg mt-2 border-2 border-accent rounded-xl px-4 py-2 z-10 w-full max-h-50 overflow-y-auto custom-scrollbar'>
           {GENDER_OPTIONS.map((gender) => (
             <li 
               key={gender.name}
-              className='cursor-pointer text-pink-200 hover:text-pink-400'
+              className='cursor-pointer text-input-text hover:text-pink-500'
               onTouchStart={() => {
                 handleChange("gender", gender.value); // Update selected gender on touch
                 setShowDropdown(false); // Close dropdown

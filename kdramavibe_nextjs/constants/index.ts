@@ -7,10 +7,8 @@ export const PLACEHOLDER = "/images/placeholder.png";
 export const ORDERBY_OPTIONS: { name: string; value: string }[] = [
   { value: 'title_asc', name: 'Title (A–Z)' },
   { value: 'title_desc', name: 'Title (Z–A)' },
-  { value: 'votes_asc', name: 'Votes (Ascending)' },
-  { value: 'votes_desc', name: 'Votes (Descending)' },
-  { value: 'rating_asc', name: 'Rating (Ascending)' },
-  { value: 'rating_desc', name: 'Rating (Descending)' },
+  { value: 'votes_desc', name: 'Most Votes' },
+  { value: 'rating_desc', name: 'Highest Rating' },
   { value: 'year_asc', name: 'Year (Oldest First)' },
   { value: 'year_desc', name: 'Year (Newest First)' },
 ];
@@ -19,8 +17,7 @@ export const ORDERBY_OPTIONS: { name: string; value: string }[] = [
 export const KACTOR_ORDERBY_OPTIONS: { name: string; value: string }[] = [
   { value: 'name_asc', name: 'Name (A–Z)' },
   { value: 'name_desc', name: 'Name (Z–A)' },
-  { value: 'votes_asc', name: 'Votes (Ascending)' },
-  { value: 'votes_desc', name: 'Votes (Descending)' },
+  { value: 'votes_desc', name: 'Most Votes' },
   { value: 'age_asc', name: 'Age (Ascending)' },
   { value: 'age_desc', name: 'Age (Descending)' },
 ];
@@ -75,4 +72,39 @@ export const GENRES_OPTIONS: string[] = [
   "Tragedy", "Tragicomedy", "Unreliable source?", "Vampire", "Variety show", "Vigilante",
   "War", "War drama", "Web series", "Web television", "Workplace", "Workplace comedy",
   "Workplace drama", "Youth", "Youth Drama", "Zombie apocalypse", "Zombie comedy"
+];
+
+export const FEMALE_COLORS = [
+  "bg-pink-200",
+  "bg-rose-200",
+  "bg-fuchsia-200",
+  "bg-purple-200",
+  "bg-red-200",
+  "bg-pink-300",
+  "bg-rose-300",
+];
+
+export const MALE_COLORS = [
+  "bg-blue-200",
+  "bg-indigo-200",
+  "bg-cyan-200",
+  "bg-sky-200",
+  "bg-teal-200",
+  "bg-blue-300",
+  "bg-indigo-300",
+];
+
+export const NEUTRAL_COLORS = [
+  "bg-gray-200",
+  "bg-slate-200",
+  "bg-zinc-200",
+  "bg-stone-200",
+  "bg-neutral-200",
+  "bg-gray-300",
+];
+
+export const ALL_COLORS = [
+  ...FEMALE_COLORS,
+  ...MALE_COLORS,
+  ...NEUTRAL_COLORS,
 ];

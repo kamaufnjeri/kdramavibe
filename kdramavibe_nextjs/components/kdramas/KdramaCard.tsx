@@ -13,7 +13,10 @@ const KdramaCard: React.FC<KdramaCardProps> = ({ kdrama }) => {
     <div className="group rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition h-full">
       {/* Thumbnail image linking to kdrama details */}
       <Link href={`/k-dramas/${kdrama.slug}`}>
-        <ImageWithFallback alt={kdrama.title} imageSrc={kdrama.image_url} />
+        <ImageWithFallback 
+          alt={kdrama.title} 
+          imageSrc={kdrama.image_url || kdrama.dramabeans_image_url} 
+        />
       </Link>
 
       <div className="p-3">

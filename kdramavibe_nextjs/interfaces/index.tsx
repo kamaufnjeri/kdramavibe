@@ -29,6 +29,7 @@ export interface Kdrama {
   end_year: string | null;
   genres: string[];
   image_url: string | null;
+  dramabeans_image_url: string | null;
 }
 
 export interface Kactor {
@@ -108,6 +109,7 @@ export interface KdramaDetail {
 export interface KactorDramas {
   kdrama_title: string;
   kdrama_slug: string;
+  kdrama_image_url: string | null;
   role_name?: string;
   year?: string | null;
 }

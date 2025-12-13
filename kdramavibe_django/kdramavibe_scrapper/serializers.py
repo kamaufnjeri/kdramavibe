@@ -90,11 +90,12 @@ class KactorDramaSerializer(serializers.ModelSerializer):
     """
     kdrama_title = serializers.CharField(source="kdrama.title", read_only=True)
     kdrama_slug = serializers.SlugField(source="kdrama.slug", read_only=True)
+    kdrama_image_url = serializers.SerializerMethodField(read_only=True)
     year = serializers.SerializerMethodField()
 
     class Meta:
         model = Krole
-        fields = ["kdrama_title", "kdrama_slug", "role_name", "year"]
+        fields = ["kdrama_title", "kdrama_slug", "role_name", "year", "kdrama_image_url"]
 
     def get_year(self, obj):
         """
@@ -110,7 +111,18 @@ class KactorDramaSerializer(serializers.ModelSerializer):
             return str(end)
         else:
             return None
+    def get_kdrama_image_url(self, obj):
+        """
+        Return the image URL from Kactor or fallback to Dramabeans image.
+        """
+        if obj.kdrama.image_url:
+            return obj.kdrama.image_url
 
+        dramabeans_details = getattr(obj.kdrama, "dramabeans_details", None)
+        if dramabeans_details and getattr(dramabeans_details, "image_url", None):
+            return dramabeans_details.image_url
+
+        return None
 
 class KactorDetailSerializer(KactorSerializer):
     """

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import GenresAutoComplete from './GenresAutoComplete'
 import YearsSelect from './YearsSelect'
 import { FaSync } from 'react-icons/fa'
-import { useRouter } from 'next/navigation'
 import { KdramasFilter } from '@/interfaces'
 import PageSelect from './PageSelect'
 import Pill from '../common/Pill'
@@ -143,9 +142,9 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
             className="
               w-full rounded-xl px-4 py-2
               border-2 border-accent 
-              text-pink-200 
-              bg-[#1a001f]
-              placeholder:text-pink-400
+              text-input-text
+          bg-input-bg
+          placeholder:text-pink-500
               focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary
               hover:border-primary transition-colors duration-200
             "

@@ -21,6 +21,8 @@
   --color-text: #1f2937;           
   --color-border: #e5e7eb;         
   --color-primary-rgb: 236,72,153; 
+  --color-input-bg: #fccee8;
+  --color-input-text: #1a001f;
 }
 
 /* 🌙 Dark mode overrides */
@@ -32,6 +34,8 @@
   --color-text: #f9fafb;           /* light text */
   --color-border: #374151;         /* subtle border */
   --color-primary-rgb: 244,114,182; /* pink glow RGB */
+  --color-input-bg: #1a001f;
+  --color-input-text: #fccee8;
 }
 
 /* 🌸 Base transitions for body */

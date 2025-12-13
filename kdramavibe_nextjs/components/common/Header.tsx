@@ -16,7 +16,7 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
 
   return (
-    <header className="px-2 border-b-2 border-gray-300 flex flex-col sm:flex-row gap-2 sm:h-20 items-start sm:items-center justify-between w-full bg-[color:var(--color-background)] transition-all duration-300">
+    <header className="px-2 border-b-2 border-gray-300 flex flex-col sm:flex-row gap-2 sm:h-20 items-start sm:items-center justify-between w-full transition-all duration-300">
       
       {/* Logo and Hamburger Menu Button */}
       <div className="w-full flex flex-row gap-4 justify-between items-center">

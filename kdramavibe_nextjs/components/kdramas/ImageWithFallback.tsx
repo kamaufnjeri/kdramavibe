@@ -1,6 +1,6 @@
 'use client';
 
-import { MAN_PALCEHOLDER, PLACEHOLDER, WOMAN_PLACEHOLDER } from "@/constants";
+import { ALL_COLORS, FEMALE_COLORS, MALE_COLORS } from "@/constants";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -22,29 +22,44 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   className = "object-contain w-full aspect-[3/4] rounded-2xl",
 }) => {
   // determine fallback image based on gender
-  const defaultFallback =
-    gender === "female"
-      ? WOMAN_PLACEHOLDER
-      : gender === "male"
-      ? MAN_PALCEHOLDER
-      : PLACEHOLDER;
+    const [hasError, setHasError] = useState(false);
 
-  // state to track current image source
-  const [imgSrc, setImgSrc] = useState(
-    typeof imageSrc === "string" && imageSrc.startsWith("http")
-      ? imageSrc
-      : defaultFallback
-  );
+
+   const showImage =
+    imageSrc &&
+    typeof imageSrc === "string" &&
+    imageSrc.startsWith("http") &&
+    !hasError;
+
+  const colorPool =
+    gender === "female"
+      ? FEMALE_COLORS
+      : gender === "male"
+      ? MALE_COLORS
+      : ALL_COLORS;
+
+    const getRandomColor = (colors: string[]) =>
+      colors[Math.floor(Math.random() * colors.length)];
 
   return (
-    <Image
-      src={imgSrc}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      onError={() => setImgSrc(defaultFallback)} // fallback if image fails to load
-    />
+   <>
+    {showImage ? (
+        <Image
+          src={imageSrc}
+          alt={alt}
+        width={width}
+        height={height}
+        className={`${className} rounded-md`}
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <div className={`${className} flex items-center justify-center p-4 rounded-2xl ${getRandomColor(colorPool)}`}>
+          <span className="text-4xl font-semibold">
+            {alt}
+          </span>
+        </div>
+      )}
+   </>
   );
 };
 

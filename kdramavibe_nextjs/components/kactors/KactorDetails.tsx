@@ -54,12 +54,12 @@ const KactorDetails: React.FC<KactorDetailsProps> = ({ kactor }) => {
         {/* Images and Description */}
         <div className="flex flex-col gap-6">
           <div className='flex flex-col sm:flex-row gap-2 justify-between w-full'>
-            <ImageWithFallback
+            {kactor.image_url && (<ImageWithFallback
               alt={kactor.name}
               imageSrc={kactor.image_url}
               gender={kactor.gender ? kactor.gender : null}
               className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
-            />
+            />)}
             {kactor.dramabeans_image_url && (
               <ImageWithFallback
                 alt={kactor.name}

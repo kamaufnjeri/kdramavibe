@@ -1,69 +1,78 @@
 import { KactorDramas } from '@/interfaces';
 import Link from 'next/link';
 import React from 'react';
+import ImageWithFallback from '../kdramas/ImageWithFallback';
 
 interface KactorDramasProps {
-  kdramas: KactorDramas[]; // Array of dramas for the Kactor
+  kdramas: KactorDramas[]; // array of kdrama cast objects
 }
 
 const KactorDramasDetails: React.FC<KactorDramasProps> = ({ kdramas }) => {
-  // Helper function to capitalize first letter
+  // Capitalize the first letter of a string safely
   const capitalize = (text: string) =>
     text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
 
   return (
-    <div className="rounded-2xl bg-background/80 shadow-lg text-text lg:w-3/4 w-full overflow-hidden">
+    <div className="rounded-2xl border border-border bg-background/60 shadow-sm 
+                    text-text lg:w-3/4 w-full flex flex-col overflow-hidden">
       
       {/* Header */}
-      <div className="bg-primary/80 text-white px-6 py-4">
-        <h2 className="font-extrabold text-3xl tracking-wide">Dramas</h2>
+      <div className="bg-primary/80 text-white px-4 py-3">
+        <h2 className="font-extrabold text-2xl tracking-wide">Kdramas</h2>
       </div>
 
-      {/* Dramas Table */}
-      {kdramas.length > 0 ? (
-        <div className="overflow-x-auto p-4">
-          <table className="min-w-full text-left table-auto">
-            <thead>
-              <tr className="text-gray-400 uppercase text-sm">
-                <th className="px-4 py-3 w-2/12">Year</th>
-                <th className="px-4 py-3 w-5/12">Title</th>
-                <th className="px-4 py-3 w-5/12">Role or Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              {kdramas.map((kdrama) => (
-                <tr
-                  key={kdrama.kdrama_slug}
-                  className="transition-colors duration-200 hover:bg-primary/10 rounded-lg"
-                >
-                  {/* Year of the drama */}
-                  <td className="px-4 py-3 font-medium text-left">{kdrama.year}</td>
+      {/* Body */}
+      <div className="p-6">
+        {Array.isArray(kdramas) && kdramas.length > 0 ? (
+          <ul className="flex flex-wrap w-full">
+            {kdramas.map((kdrama) => (
+              <li
+                key={kdrama.kdrama_slug}
+                className="p-3 w-full sm:w-1/2 lg:w-1/2"
+              >
+                <div className="border border-border rounded-xl p-4 h-full flex flex-row gap-3 hover:shadow-md transition">
+                  {/* Actor Image */}
+                  <div className="w-1/3 aspect-[3/4] overflow-hidden rounded-md bg-gray-100">
+                    <ImageWithFallback
+                      className="object-cover w-full h-full"
+                      alt={kdrama.kdrama_title}
+                      imageSrc={kdrama.kdrama_image_url}
+                    />
+                  </div>
 
-                  {/* Drama title with link */}
-                  <td className="px-4 py-3">
+                  {/* Actor Info */}
+                  <div className="flex flex-col w-2/3">
+                  <div className='w-full flex flex-row justify-between'>
                     <Link
-                      href={`/k-dramas/${kdrama.kdrama_slug}`}
-                      className="text-accent font-bold text-lg hover:underline"
+                      href={`/k-actors/${kdrama.kdrama_slug}`}
+                      className="text-accent hover:underline font-semibold text-lg transition"
                     >
                       {capitalize(kdrama.kdrama_title)}
                     </Link>
-                  </td>
-
-                  {/* Role name or placeholder */}
-                  <td className="px-4 py-3 font-normal opacity-80">
-                    {kdrama.role_name ? capitalize(kdrama.role_name) : '-'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        // Display when no dramas are available
-        <p className="text-center text-gray-500 italic p-4">
-          No cast information available.
-        </p>
-      )}
+                      
+                        {kdrama.year && (
+                      <p className="pt-1 text-sm font-semibold text-right">
+                        {kdrama.year}
+                      </p>
+                    )}
+                  </div>
+                    
+                    {kdrama.role_name && (
+                      <p className="pt-1 text-sm">
+                        {capitalize(kdrama.role_name)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-center text-gray-500 italic">
+            No cast information available.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

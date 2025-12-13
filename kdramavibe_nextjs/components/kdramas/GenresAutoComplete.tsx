@@ -32,9 +32,9 @@ const GenresAutoComplete: React.FC<GenresAutoCompleteProps> = ({ selectedGenre, 
         className="
           w-full rounded-xl px-4 py-2
           border-2 border-accent 
-          text-pink-200 
-          bg-[#1a001f]
-          placeholder:text-pink-400
+          text-input-text
+          bg-input-bg
+          placeholder:text-pink-500
           focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary
           hover:border-primary transition-colors duration-200
         "
