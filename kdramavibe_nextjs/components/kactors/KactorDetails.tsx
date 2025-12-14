@@ -57,6 +57,7 @@ const KactorDetails: React.FC<KactorDetailsProps> = ({ kactor }) => {
             {kactor.image_url && (<ImageWithFallback
               alt={kactor.name}
               imageSrc={kactor.image_url}
+              containerStyles={'w-[300px] h-full'}
               gender={kactor.gender ? kactor.gender : null}
               className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
             />)}
@@ -64,6 +65,7 @@ const KactorDetails: React.FC<KactorDetailsProps> = ({ kactor }) => {
               <ImageWithFallback
                 alt={kactor.name}
                 imageSrc={kactor.dramabeans_image_url}
+                containerStyles={'w-[300px] h-full'}
                 gender={kactor.gender ? kactor.gender : null}
                 className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
               />

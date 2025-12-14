@@ -36,6 +36,7 @@ const KdramaCastsDetails: React.FC<KdramaCastsProps> = ({ kactors }) => {
                     <ImageWithFallback
                       className="object-cover w-full h-full"
                       alt={kactor.kactor_name}
+                      textSize={'text-md'}
                       imageSrc={kactor.kactor_image_url}
                       gender={kactor.kactor_gender}
                     />

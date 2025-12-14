@@ -36,6 +36,7 @@ const KactorDramasDetails: React.FC<KactorDramasProps> = ({ kdramas }) => {
                     <ImageWithFallback
                       className="object-cover w-full h-full"
                       alt={kdrama.kdrama_title}
+                      textSize={'text-md'}
                       imageSrc={kdrama.kdrama_image_url}
                     />
                   </div>
@@ -44,7 +45,7 @@ const KactorDramasDetails: React.FC<KactorDramasProps> = ({ kdramas }) => {
                   <div className="flex flex-col w-2/3">
                   <div className='w-full flex flex-row justify-between'>
                     <Link
-                      href={`/k-actors/${kdrama.kdrama_slug}`}
+                      href={`/k-dramas/${kdrama.kdrama_slug}`}
                       className="text-accent hover:underline font-semibold text-lg transition"
                     >
                       {capitalize(kdrama.kdrama_title)}

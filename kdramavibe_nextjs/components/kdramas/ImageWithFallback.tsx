@@ -7,6 +7,8 @@ import { useState } from "react";
 interface ImageWithFallbackProps {
   imageSrc?: string | null; // primary image URL
   alt: string; // alt text for accessibility
+  textSize?: string | null;
+  containerStyles?: string | null;
   gender?: "female" | "male" | null; // gender-based fallback
   width?: number; // optional width
   height?: number; // optional height
@@ -17,6 +19,8 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   imageSrc,
   alt,
   gender,
+  textSize,
+  containerStyles,
   width = 300,
   height = 400,
   className = "object-contain w-full aspect-[3/4] rounded-2xl",
@@ -31,6 +35,12 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
     imageSrc.startsWith("http") &&
     !hasError;
 
+  const getRandomColorPair = (colors: { bg: string; text: string }[]) =>
+      colors[Math.floor(Math.random() * colors.length)];
+
+
+ 
+
   const colorPool =
     gender === "female"
       ? FEMALE_COLORS
@@ -38,8 +48,9 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       ? MALE_COLORS
       : ALL_COLORS;
 
-    const getRandomColor = (colors: string[]) =>
-      colors[Math.floor(Math.random() * colors.length)];
+    
+
+    const { bg, text } = getRandomColorPair(colorPool);
 
   return (
    <>
@@ -53,8 +64,8 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
           onError={() => setHasError(true)}
         />
       ) : (
-        <div className={`${className} flex items-center justify-center p-4 rounded-2xl ${getRandomColor(colorPool)}`}>
-          <span className="text-4xl font-semibold">
+        <div className={`${className} ${containerStyles} flex items-center justify-center p-4 ${bg} ${text}`}>
+          <span className={`${textSize ? textSize : "text-4xl"} font-semibold`}>
             {alt}
           </span>
         </div>

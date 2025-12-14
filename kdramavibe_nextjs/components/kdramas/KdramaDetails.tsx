@@ -67,6 +67,8 @@ const KdramaDetails: React.FC<KdramaDetailsProps> = ({ kdrama }) => {
           <ImageWithFallback
             alt={kdrama.title}
             imageSrc={kdrama.image_url}
+            containerStyles={'w-[300px] h-full'}
+
             className="object-contain self-start bg-gray-100 rounded-xl shadow-md"
           />
 

@@ -75,33 +75,46 @@ export const GENRES_OPTIONS: string[] = [
 ];
 
 export const FEMALE_COLORS = [
-  "bg-pink-200",
-  "bg-rose-200",
-  "bg-fuchsia-200",
-  "bg-purple-200",
-  "bg-red-200",
-  "bg-pink-300",
-  "bg-rose-300",
+  { bg: "bg-pink-500", text: "text-white" },
+  { bg: "bg-rose-400", text: "text-black" },
+  { bg: "bg-fuchsia-500", text: "text-white" },
+  { bg: "bg-purple-400", text: "text-black" },
+  { bg: "bg-emerald-400", text: "text-black" },
+  { bg: "bg-red-400", text: "text-black" },
+  { bg: "bg-violet-500", text: "text-white" },
+  { bg: "bg-pink-300", text: "text-black" },
+  { bg: "bg-rose-500", text: "text-white" },
+  { bg: "bg-lime-300", text: "text-black" },
 ];
+
 
 export const MALE_COLORS = [
-  "bg-blue-200",
-  "bg-indigo-200",
-  "bg-cyan-200",
-  "bg-sky-200",
-  "bg-teal-200",
-  "bg-blue-300",
-  "bg-indigo-300",
+  { bg: "bg-blue-700", text: "text-white" },
+  { bg: "bg-indigo-700", text: "text-white" },
+  { bg: "bg-sky-500", text: "text-white" },
+  { bg: "bg-cyan-600", text: "text-white" },
+  { bg: "bg-slate-800", text: "text-white" },
+  { bg: "bg-zinc-700", text: "text-white" },
+  { bg: "bg-teal-600", text: "text-white" },
+  { bg: "bg-gray-600", text: "text-white" },
+  { bg: "bg-blue-500", text: "text-white" },
+  { bg: "bg-indigo-500", text: "text-white" },
 ];
 
+
 export const NEUTRAL_COLORS = [
-  "bg-gray-200",
-  "bg-slate-200",
-  "bg-zinc-200",
-  "bg-stone-200",
-  "bg-neutral-200",
-  "bg-gray-300",
+  { bg: "bg-gray-800", text: "text-white" },
+  { bg: "bg-gray-200", text: "text-black" },
+  { bg: "bg-blue-600", text: "text-white" },
+  { bg: "bg-green-500", text: "text-white" },
+  { bg: "bg-yellow-300", text: "text-black" },
+  { bg: "bg-purple-600", text: "text-white" },
+  { bg: "bg-teal-500", text: "text-white" },
+  { bg: "bg-indigo-500", text: "text-white" },
+  { bg: "bg-orange-400", text: "text-black" },
+  { bg: "bg-slate-700", text: "text-white" },
 ];
+
 
 export const ALL_COLORS = [
   ...FEMALE_COLORS,

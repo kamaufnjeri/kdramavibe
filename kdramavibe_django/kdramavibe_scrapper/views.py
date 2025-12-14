@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import django_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q
+from django.db.models import Q, F
 
 from .serializers import (
     KdramaSerializer,
@@ -116,12 +116,18 @@ class KdramaFilter(django_filters.FilterSet):
         order_map = {
             'title_asc': ['title'],
             'title_desc': ['-title'],
-            'votes_asc': ['dramabeans_details__no_of_votes'],
-            'votes_desc': ['-dramabeans_details__no_of_votes'],
-            'rating_asc': ['dramabeans_details__rating'],
-            'rating_desc': ['-dramabeans_details__rating'],
-            'year_asc': ['start_year', 'end_year'],
-            'year_desc': ['-start_year', '-end_year'],
+            'votes_asc': [F('dramabeans_details__no_of_votes').asc(nulls_last=True)],
+            'votes_desc': [F('dramabeans_details__no_of_votes').desc(nulls_last=True)],
+            'rating_asc': [F('dramabeans_details__rating').asc(nulls_last=True)],
+            'rating_desc': [F('dramabeans_details__rating').desc(nulls_last=True)],
+            'year_asc': [
+                F('start_year').asc(nulls_last=True),
+                F('end_year').asc(nulls_last=True),
+            ],
+            'year_desc': [
+                F('start_year').desc(nulls_last=True),
+                F('end_year').desc(nulls_last=True),
+            ],
         }
 
         order_fields = order_map.get(value)
@@ -200,10 +206,14 @@ class KactorFilter(django_filters.FilterSet):
         order_map = {
             'name_asc': ['name'],
             'name_desc': ['-name'],
-            'votes_asc': ['dramabeans_details__no_of_votes'],
-            'votes_desc': ['-dramabeans_details__no_of_votes'],
-            'age_asc': ['age'],
-            'age_desc': ['-age'],
+            'votes_asc': [F('dramabeans_details__no_of_votes').asc(nulls_last=True)],
+            'votes_desc': [F('dramabeans_details__no_of_votes').desc(nulls_last=True)],
+            'age_asc': [
+                F('age').asc(nulls_last=True)
+            ],
+            'age_desc': [
+                F('age').desc(nulls_last=True)
+            ],
         }
 
         order_fields = order_map.get(value)
