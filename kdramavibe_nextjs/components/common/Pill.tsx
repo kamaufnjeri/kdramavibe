@@ -17,7 +17,7 @@ const Pill: React.FC<PillProps> = ({ fieldKey, value, resetFilterField }) => {
           <p>{value}</p>
 
           {/* Button to clear the filter field */}
-          <button onClick={() => resetFilterField(fieldKey, '')}>
+          <button onClick={() => resetFilterField(fieldKey, '')} className='cursor-pointer'>
             <FaTimes />
           </button>
         </span>
