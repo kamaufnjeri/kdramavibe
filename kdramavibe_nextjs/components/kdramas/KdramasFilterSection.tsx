@@ -82,6 +82,18 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
       navigateWithReload(`/?${query}`);
     }
   };
+  // Handle Enter key submission for text inputs
+  const handleOrderingChange = (key: string = 'ordering', value: string) => {
+  
+    const updatedFilters = { ...filters, [key]: value };
+    setFilters(updatedFilters);
+    setPillsFilters(updatedFilters);
+
+    const query = getQuery(updatedFilters);
+    navigateWithReload(`/?${query}`);
+  
+  };
+
 
   // Handle pagination
   const handlePageChange = (pageNo: string) => {
@@ -171,7 +183,7 @@ const KdramasFilterSection: React.FC<KdramaFilterSectionProps> = ({ searchParams
 
       {/* Order & Pagination */}
       <div className='flex flex-wrap justify-between items-end w-full'>
-        <OrderByOptions selectedOrderBy={filters.ordering} handleChange={handleChange}/>
+        <OrderByOptions selectedOrderBy={filters.ordering} handleChange={handleOrderingChange}/>
         <PageSelect selectedPage={filters.page} handlePageChange={handlePageChange} noOfPages={noOfPages}/>
       </div>
 

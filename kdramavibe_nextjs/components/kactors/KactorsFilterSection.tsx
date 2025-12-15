@@ -85,6 +85,17 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
     }
   }
 
+  // Handle Enter key submission for text inputs
+  const handleOrderingChange = (key: string = 'ordering', value: string) => {
+  
+    const updatedFilters = { ...filters, [key]: value };
+    setFilters(updatedFilters);
+    setPillsFilters(updatedFilters);
+
+    const query = getQuery(updatedFilters);
+    navigateWithReload(`/k-actors/?${query}`);
+  
+  };
   // Handle page selection changes
   const handlePageChange = (pageNo: string) => {
     const updatedFilters = { ...filters, page: pageNo }
@@ -167,7 +178,7 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
 
       {/* Ordering and Pagination */}
       <div className='flex sm:flex-row gap-2 flex-col items-end sm:justify-between'>
-        <OrderByOptions selectedOrderBy={filters.ordering} handleChange={handleChange} />
+        <OrderByOptions selectedOrderBy={filters.ordering} handleChange={handleOrderingChange} />
         <PageSelect selectedPage={filters.page} handlePageChange={handlePageChange} noOfPages={noOfPages} />
       </div>
 
