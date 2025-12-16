@@ -57,7 +57,7 @@ const KactorsFilterSection: React.FC<KactorFilterSectionProps> = ({ searchParams
     const query = new URLSearchParams({
       ...(filtersToUse?.name ? { name: filtersToUse.name } : {}),
       ...(filtersToUse?.age ? { age: filtersToUse.age } : {}),
-      ...(filtersToUse?.gender ? { gender: filtersToUse?.gender.toLowerCase() } : {}),
+      ...(filtersToUse?.gender ? { gender: filtersToUse?.gender } : {}),
       ...(filtersToUse?.ordering ? { ordering: filtersToUse.ordering } : {}),
     }).toString()
     return query
